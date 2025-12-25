@@ -1,6 +1,7 @@
 // components/Navbar.jsx
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { useState } from "react";
+import { Link } from "react-router-dom"; // Use Link for SPA navigation
 import ThemeToggle from "./ThemeToggle";
 import { Menu, X } from "lucide-react";
 
@@ -26,20 +27,22 @@ const Navbar = () => {
       className="fixed top-0 left-0 right-0 z-50 bg-[var(--surface)]/80 backdrop-blur-lg border-b border-[var(--border)] transition-all"
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-        <div className="text-2xl font-bold tracking-tight">Design System</div>
+        <div className="text-2xl font-bold tracking-tight">
+          <Link to="/">Design System</Link>
+        </div>
         <div className="hidden md:flex items-center gap-8">
-          <a
-            href="#components"
+          <Link
+            to="/components"
             className="text-[var(--muted)] hover:text-[var(--primary)] transition-colors"
           >
             Components
-          </a>
-          <a
-            href="#docs"
+          </Link>
+          <Link
+            to="/docs"
             className="text-[var(--muted)] hover:text-[var(--primary)] transition-colors"
           >
             Docs
-          </a>
+          </Link>
           <ThemeToggle />
         </div>
         <button
@@ -49,6 +52,7 @@ const Navbar = () => {
           {mobileOpen ? <X className="size-6" /> : <Menu className="size-6" />}
         </button>
       </div>
+
       {/* Mobile menu */}
       {mobileOpen && (
         <motion.div
@@ -57,12 +61,20 @@ const Navbar = () => {
           className="md:hidden bg-[var(--surface)] border-t border-[var(--border)] overflow-hidden"
         >
           <div className="flex flex-col p-6 gap-6">
-            <a href="#components" className="text-lg">
+            <Link
+              to="/components"
+              className="text-lg"
+              onClick={() => setMobileOpen(false)}
+            >
               Components
-            </a>
-            <a href="#docs" className="text-lg">
+            </Link>
+            <Link
+              to="/docs"
+              className="text-lg"
+              onClick={() => setMobileOpen(false)}
+            >
               Docs
-            </a>
+            </Link>
             <ThemeToggle />
           </div>
         </motion.div>
