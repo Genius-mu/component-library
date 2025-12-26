@@ -2,18 +2,18 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { resolve } from "path";
-import tailwindcss from "@tailwindcss/vite"; // Official v4 plugin
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   plugins: [
     react(),
-    tailwindcss(), // Handles Tailwind v4 integration — no config file needed
+    tailwindcss(), // Handles Tailwind v4 — no config needed
   ],
   build: {
     lib: {
-      entry: resolve(__dirname, "src/index.js"), // Your barrel file exporting all components
+      entry: resolve(__dirname, "src/index.js"),
       name: "ComponentLibrary",
-      fileName: (format) => `my-design-system.${format}.js`,
+      fileName: (format) => `component-library.${format}.js`,
     },
     rollupOptions: {
       external: ["react", "react-dom", "framer-motion", "lucide-react"],
@@ -26,5 +26,8 @@ export default defineConfig({
         },
       },
     },
+    // Important: Do NOT bundle CSS into JS — let users import it
+    cssCodeSplit: false,
+    emptyOutDir: true,
   },
 });

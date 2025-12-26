@@ -1,16 +1,86 @@
-# React + Vite
+# Component Library
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A premium React component library with Tailwind v4, Framer Motion & Lucide icons. Built for modern web applications with beautiful animations, dark/light theme support, and premium UX design patterns.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Modern Design**: Sleek, responsive components with premium UX patterns.
+- **Animations**: Smooth animations powered by Framer Motion.
+- **Theme Support**: Built-in dark/light theme toggle.
+- **Icons**: Integrated Lucide icons for consistent iconography.
+- **Tailwind CSS**: Styled with Tailwind v4 for easy customization.
+- **TypeScript Ready**: Full TypeScript support for better development experience.
 
-## React Compiler
+## Installation
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Install the component library via npm:
 
-## Expanding the ESLint configuration
+```bash
+npm install component-library
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Peer Dependencies
+
+Make sure to install the required peer dependencies:
+
+```bash
+npm install react@^18.0.0 react-dom@^18.0.0 framer-motion@^11.0.0 lucide-react@^0.400.0 tailwindcss@^4.0.0
+```
+
+## Usage
+
+Import and use components in your React application:
+
+```jsx
+import { Button, Card } from "component-library";
+
+function App() {
+  return (
+    <div>
+      <Button variant="primary">Click me</Button>
+      <Card title="Example Card" content="This is a card component." />
+    </div>
+  );
+}
+```
+
+## Components
+
+The library includes the following components:
+
+- Accordion
+- Alert
+- Badge
+- Breadcrumb
+- Button
+- Card
+- Carousel
+- Dropdown
+- Input
+- Modal
+- Navbar
+- Pagination
+- ProgressBar
+- Skeleton
+- Spinner
+- Switch
+- Tabs
+- ThemeToggle
+- Toast
+- Tooltip
+
+## Scripts
+
+- `npm run dev`: Start the development server.
+- `npm run build`: Build the library for production.
+- `npm run preview`: Preview the built library.
+- `npm run lint`: Run ESLint for code linting.
+- `npm run prepublishOnly`: Build the library before publishing.
+
+## Contributing
+
+Contributions are welcome! Please read the contributing guidelines before getting started.
+
+## License
+
+This project is licensed under the MIT License.

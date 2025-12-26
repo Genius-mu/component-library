@@ -1,4 +1,4 @@
-// App.jsx
+// HomePage.jsx
 import { useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Navbar from "../components/Navbar";
@@ -15,6 +15,10 @@ import Carousel from "../components/Carousel";
 import Alert from "../components/Alert";
 import Badge from "../components/Badge";
 import Spinner from "../components/Spinner";
+import Toast from "../components/Toast";
+import Pagination from "../components/Pagination";
+import Skeleton from "../components/Skeleton";
+import Switch from "../components/Switch";
 import {
   Code,
   ArrowRight,
@@ -31,15 +35,30 @@ import {
 function HomePage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [switchChecked, setSwitchChecked] = useState(false);
+  const [toast, setToast] = useState({
+    visible: false,
+    type: "info",
+    message: "",
+  });
 
   const { scrollYProgress } = useScroll();
   const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText("npm install my-design-system");
+    navigator.clipboard.writeText("npm install component-library");
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const showToast = (type, message) => {
+    setToast({ visible: true, type, message });
+    setTimeout(
+      () => setToast({ visible: false, type: "info", message: "" }),
+      4000
+    );
   };
 
   // Sample carousel slides
@@ -125,54 +144,109 @@ function HomePage() {
           </div>
         </section>
 
-        {/* New: Tabs Demo */}
+        {/* Toast Demo */}
         <section className="my-32 max-w-5xl mx-auto">
           <h2 className="text-4xl font-bold text-center mb-12">
-            Tabs Component
+            Toast Notification
           </h2>
-          <Tabs
-            tabs={[
-              {
-                label: "Overview",
-                content: (
-                  <div className="space-y-6">
-                    <h3 className="text-2xl font-semibold">
-                      Welcome to the Overview
-                    </h3>
-                    <p className="text-[var(--muted)]">
-                      This is a beautifully animated tabs component with smooth
-                      transitions and a sliding underline indicator.
-                    </p>
-                  </div>
-                ),
-              },
-              {
-                label: "Features",
-                content: (
-                  <div className="space-y-6">
-                    <h3 className="text-2xl font-semibold">Key Features</h3>
-                    <ul className="list-disc pl-6 text-[var(--muted)] space-y-2">
-                      <li>Animated underline</li>
-                      <li>Framer Motion transitions</li>
-                      <li>Fully theme-aware</li>
-                    </ul>
-                  </div>
-                ),
-              },
-              {
-                label: "Usage",
-                content: (
-                  <div className="space-y-6">
-                    <h3 className="text-2xl font-semibold">How to Use</h3>
-                    <p className="text-[var(--muted)]">
-                      Pass an array of objects with <code>label</code> and{" "}
-                      <code>content</code>.
-                    </p>
-                  </div>
-                ),
-              },
-            ]}
+          <div className="flex flex-wrap gap-4 justify-center">
+            <Button onClick={() => showToast("info", "This is an info toast!")}>
+              Info Toast
+            </Button>
+            <Button
+              onClick={() =>
+                showToast("success", "Action completed successfully!")
+              }
+            >
+              Success Toast
+            </Button>
+            <Button
+              onClick={() =>
+                showToast("warning", "Be careful — this is a warning!")
+              }
+            >
+              Warning Toast
+            </Button>
+            <Button onClick={() => showToast("error", "Something went wrong!")}>
+              Error Toast
+            </Button>
+          </div>
+          {toast.visible && (
+            <Toast
+              message={toast.message}
+              type={toast.type}
+              onClose={() =>
+                setToast({ visible: false, type: "info", message: "" })
+              }
+            />
+          )}
+        </section>
+
+        {/* Pagination Demo */}
+        <section className="my-32 max-w-5xl mx-auto">
+          <h2 className="text-4xl font-bold text-center mb-12">Pagination</h2>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={20}
+            onPageChange={setCurrentPage}
+            showFirstLast
+            maxVisiblePages={7}
           />
+        </section>
+
+        {/* Skeleton Demo */}
+        <section className="my-32 max-w-5xl mx-auto">
+          <h2 className="text-4xl font-bold text-center mb-12">
+            Skeleton Loading
+          </h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="space-y-4">
+              <Skeleton variant="rectangle" height="200px" />
+              <Skeleton variant="text" lines={2} />
+            </div>
+            <div className="space-y-4">
+              <Skeleton variant="circle" height="80px" width="80px" />
+              <Skeleton variant="text" lines={3} />
+            </div>
+            <div className="space-y-4">
+              <Skeleton variant="avatar" height="100px" width="100px" />
+              <Skeleton variant="text" lines={1} width="80%" />
+            </div>
+          </div>
+        </section>
+
+        {/* Switch Demo */}
+        <section className="my-32 max-w-5xl mx-auto">
+          <h2 className="text-4xl font-bold text-center mb-12">
+            Switch Toggle
+          </h2>
+          <div className="flex flex-col items-center gap-8">
+            <div className="flex items-center gap-4">
+              <Switch
+                checked={switchChecked}
+                onChange={setSwitchChecked}
+                size="sm"
+              />
+              <span className="text-[var(--muted)]">Small</span>
+            </div>
+            <div className="flex items-center gap-4">
+              <Switch
+                checked={switchChecked}
+                onChange={setSwitchChecked}
+                size="md"
+              />
+              <span className="text-[var(--muted)]">Medium (default)</span>
+            </div>
+            <div className="flex items-center gap-4">
+              <Switch
+                checked={switchChecked}
+                onChange={setSwitchChecked}
+                size="lg"
+                disabled
+              />
+              <span className="text-[var(--muted)]">Large (disabled)</span>
+            </div>
+          </div>
         </section>
 
         {/* New: Dropdown & Carousel Demo */}
@@ -350,49 +424,27 @@ function HomePage() {
             </div>
 
             {/* Spinner Demo */}
-            <section id="spinner" className="mb-24">
-              <h2 className="text-4xl font-bold mb-6">Spinner</h2>
-              <p className="text-lg text-[var(--muted)] mb-6">
-                Animated loading indicator with variants, sizes, and
-                customizable speed.
-              </p>
-
-              {/* Live Previews */}
-              <div className="flex flex-wrap items-center gap-8 mb-8">
-                <div className="flex flex-col items-center gap-2">
+            <div className="flex flex-col items-center">
+              <h3 className="text-2xl font-semibold mb-6">Spinner</h3>
+              <div className="space-y-6">
+                <div className="flex items-center justify-center">
+                  <Spinner size="sm" />
+                  <span className="ml-3 text-[var(--muted)]">Small</span>
+                </div>
+                <div className="flex items-center justify-center">
                   <Spinner size="md" />
-                  <span className="text-xs text-[var(--muted)]">
-                    Default (md)
-                  </span>
+                  <span className="ml-3 text-[var(--muted)]">Medium</span>
                 </div>
-                <div className="flex flex-col items-center gap-2">
-                  <Spinner size="lg" variant="subtle" speed={1} />
-                  <span className="text-xs text-[var(--muted)]">
-                    Subtle (lg)
-                  </span>
+                <div className="flex items-center justify-center">
+                  <Spinner size="lg" />
+                  <span className="ml-3 text-[var(--muted)]">Large</span>
                 </div>
-                <div className="flex flex-col items-center gap-2">
-                  <Spinner size="xl" variant="gradient" speed={1.5} />
-                  <span className="text-xs text-[var(--muted)]">
-                    Gradient (xl)
-                  </span>
-                </div>
-                <div className="flex flex-col items-center gap-2">
-                  <Spinner size="sm" variant="dot" speed={0.8} />
-                  <span className="text-xs text-[var(--muted)]">Dot (sm)</span>
+                <div className="flex items-center justify-center">
+                  <Spinner size="xl" color="var(--primary)" />
+                  <span className="ml-3 text-[var(--muted)]">Extra Large</span>
                 </div>
               </div>
-
-              {/* Code Example */}
-              <div className="bg-[var(--surface)] p-6 rounded-xl border border-[var(--border)] overflow-x-auto">
-                <pre className="text-sm">
-                  <code>{`<Spinner size="md" variant="default" />
-<Spinner size="lg" variant="subtle" speed={1} />
-<Spinner size="xl" variant="gradient" speed={1.5} />
-<Spinner size="sm" variant="dot" speed={0.8} />`}</code>
-                </pre>
-              </div>
-            </section>
+            </div>
           </div>
         </section>
       </div>
