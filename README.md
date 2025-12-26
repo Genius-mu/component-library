@@ -1,10 +1,10 @@
-# Component Library
+# compostick Library
 
-A premium React component library with Tailwind v4, Framer Motion & Lucide icons. Built for modern web applications with beautiful animations, dark/light theme support, and premium UX design patterns.
+A premium React compostick library with Tailwind v4, Framer Motion & Lucide icons. Built for modern web applications with beautiful animations, dark/light theme support, and premium UX design patterns.
 
 ## Features
 
-- **Modern Design**: Sleek, responsive components with premium UX patterns.
+- **Modern Design**: Sleek, responsive composticks with premium UX patterns.
 - **Animations**: Smooth animations powered by Framer Motion.
 - **Theme Support**: Built-in dark/light theme toggle.
 - **Icons**: Integrated Lucide icons for consistent iconography.
@@ -13,10 +13,10 @@ A premium React component library with Tailwind v4, Framer Motion & Lucide icons
 
 ## Installation
 
-Install the component library via npm:
+Install the compostick library via npm:
 
 ```bash
-npm install component-library
+npm install compostick-library
 ```
 
 ### Peer Dependencies
@@ -29,24 +29,24 @@ npm install react@^18.0.0 react-dom@^18.0.0 framer-motion@^11.0.0 lucide-react@^
 
 ## Usage
 
-Import and use components in your React application:
+Import and use composticks in your React application:
 
 ```jsx
-import { Button, Card } from "component-library";
+import { Button, Card } from "compostick-library";
 
 function App() {
   return (
     <div>
       <Button variant="primary">Click me</Button>
-      <Card title="Example Card" content="This is a card component." />
+      <Card title="Example Card" content="This is a card compostick." />
     </div>
   );
 }
 ```
 
-## Components
+## composticks
 
-The library includes the following components:
+The library includes the following composticks:
 
 - Accordion
 - Alert
