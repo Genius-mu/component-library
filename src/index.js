@@ -18,3 +18,5 @@ export { default as Toast } from "./components/Toast";
 export { default as Pagination } from "./components/Pagination";
 export { default as Skeleton } from "./components/Skeleton";
 export { default as Switch } from "./components/Switch";
+
+export { ThemeProvider, useTheme } from "./context/ThemeContext";
