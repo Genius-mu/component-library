@@ -1,6 +1,6 @@
 {
   "name": "compostick-library",
-  "version": "2.1.3",
+  "version": "2.1.4",
   "description": "A premium React compostick library with Tailwind v4, Framer Motion & Lucide",
   "main": "dist/compostick-library.umd.js",
   "module": "dist/compostick-library.es.js",
