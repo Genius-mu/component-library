@@ -1,6 +1,6 @@
 {
   "name": "component-library",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "A premium React component library with Tailwind v4, Framer Motion & Lucide",
   "main": "dist/component-library.umd.js",
   "module": "dist/component-library.es.js",
