@@ -7,4 +7,10 @@ export { default as ThemeToggle } from "./components/ThemeToggle";
 export { default as Tabs } from "./components/Tabs";
 export { default as Dropdown } from "./components/Dropdown";
 export { default as Carousel } from "./components/Carousel";
+export { default as Navbar } from "./components/Navbar";
+export { default as Tooltip } from "./components/Tooltip";
+export { default as ProgressBar } from "./components/ProgressBar";
+export { default as Alert } from "./components/Alert";
+export { default as Badge } from "./components/Badge";
+export { default as Spinner } from "./components/Spinner";
 // Add all other components here

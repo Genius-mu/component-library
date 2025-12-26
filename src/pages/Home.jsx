@@ -12,6 +12,9 @@ import Tooltip from "../components/Tooltip";
 import Tabs from "../components/Tabs";
 import Dropdown from "../components/Dropdown";
 import Carousel from "../components/Carousel";
+import Alert from "../components/Alert";
+import Badge from "../components/Badge";
+import Spinner from "../components/Spinner";
 import {
   Code,
   ArrowRight,
@@ -208,7 +211,23 @@ function HomePage() {
             {/* Carousel Demo */}
             <div>
               <h3 className="text-2xl font-semibold mb-6">Carousel</h3>
-              <Carousel slides={carouselSlides} autoPlay interval={4000} />
+              <Carousel
+                slides={[
+                  <div className="h-full bg-gradient-to-br from-teal-900 to-blue-900 flex items-center justify-center text-white text-4xl font-bold">
+                    Slide 1
+                  </div>,
+                  <div className="h-full bg-gradient-to-br from-purple-900 to-pink-900 flex items-center justify-center text-white text-4xl font-bold">
+                    Slide 2
+                  </div>,
+                  <div className="h-full bg-gradient-to-br from-blue-900 to-yellow-900 flex items-center justify-center text-white text-4xl font-bold">
+                    Slide 3
+                  </div>,
+                ]}
+                autoPlay
+                interval={4000}
+                showArrows
+                showDots
+              />
             </div>
           </div>
         </section>
@@ -277,6 +296,103 @@ function HomePage() {
                 </Accordion>
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* New: Alert, Badge & Spinner Demo */}
+        <section className="my-32 max-w-5xl mx-auto">
+          <h2 className="text-4xl font-bold text-center mb-12">
+            Additional Components
+          </h2>
+          <div className="grid md:grid-cols-3 gap-12">
+            {/* Alert Demo */}
+            <div className="flex flex-col items-center">
+              <h3 className="text-2xl font-semibold mb-6">Alert</h3>
+              <div className="space-y-4 w-full">
+                <Alert variant="info" title="Welcome">
+                  This is an informational message.
+                </Alert>
+
+                <Alert
+                  variant="success"
+                  dismissible
+                  onDismiss={() => console.log("Dismissed")}
+                >
+                  Operation completed successfully!
+                </Alert>
+
+                <Alert variant="warning">
+                  Be careful — this action is irreversible.
+                </Alert>
+
+                <Alert variant="danger" title="Error">
+                  Something went wrong. Please try again.
+                </Alert>
+              </div>
+            </div>
+
+            {/* Badge Demo */}
+            <div className="flex flex-col items-center">
+              <h3 className="text-2xl font-semibold mb-6">Badge</h3>
+              <div className="space-y-4">
+                <Badge variant="primary">New</Badge>
+                <Badge variant="success" withIcon>
+                  Success
+                </Badge>
+                <Badge variant="danger">Error</Badge>
+                <Badge variant="outline" size="lg" rounded="lg">
+                  Outline
+                </Badge>
+                <Badge variant="default" className="uppercase tracking-wide">
+                  Beta
+                </Badge>
+              </div>
+            </div>
+
+            {/* Spinner Demo */}
+            <section id="spinner" className="mb-24">
+              <h2 className="text-4xl font-bold mb-6">Spinner</h2>
+              <p className="text-lg text-[var(--muted)] mb-6">
+                Animated loading indicator with variants, sizes, and
+                customizable speed.
+              </p>
+
+              {/* Live Previews */}
+              <div className="flex flex-wrap items-center gap-8 mb-8">
+                <div className="flex flex-col items-center gap-2">
+                  <Spinner size="md" />
+                  <span className="text-xs text-[var(--muted)]">
+                    Default (md)
+                  </span>
+                </div>
+                <div className="flex flex-col items-center gap-2">
+                  <Spinner size="lg" variant="subtle" speed={1} />
+                  <span className="text-xs text-[var(--muted)]">
+                    Subtle (lg)
+                  </span>
+                </div>
+                <div className="flex flex-col items-center gap-2">
+                  <Spinner size="xl" variant="gradient" speed={1.5} />
+                  <span className="text-xs text-[var(--muted)]">
+                    Gradient (xl)
+                  </span>
+                </div>
+                <div className="flex flex-col items-center gap-2">
+                  <Spinner size="sm" variant="dot" speed={0.8} />
+                  <span className="text-xs text-[var(--muted)]">Dot (sm)</span>
+                </div>
+              </div>
+
+              {/* Code Example */}
+              <div className="bg-[var(--surface)] p-6 rounded-xl border border-[var(--border)] overflow-x-auto">
+                <pre className="text-sm">
+                  <code>{`<Spinner size="md" variant="default" />
+<Spinner size="lg" variant="subtle" speed={1} />
+<Spinner size="xl" variant="gradient" speed={1.5} />
+<Spinner size="sm" variant="dot" speed={0.8} />`}</code>
+                </pre>
+              </div>
+            </section>
           </div>
         </section>
       </div>
