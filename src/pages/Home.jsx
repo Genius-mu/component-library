@@ -57,7 +57,7 @@ function HomePage() {
     setToast({ visible: true, type, message });
     setTimeout(
       () => setToast({ visible: false, type: "info", message: "" }),
-      4000
+      4000,
     );
   };
 
@@ -378,7 +378,7 @@ function HomePage() {
           <h2 className="text-4xl font-bold text-center mb-12">
             Additional Components
           </h2>
-          <div className="grid md:grid-cols-3 gap-12">
+          <div className="grid md:grid-cols-2 gap-12">
             {/* Alert Demo */}
             <div className="flex flex-col items-center">
               <h3 className="text-2xl font-semibold mb-6">Alert</h3>
@@ -405,43 +405,47 @@ function HomePage() {
               </div>
             </div>
 
-            {/* Badge Demo */}
-            <div className="flex flex-col items-center">
-              <h3 className="text-2xl font-semibold mb-6">Badge</h3>
-              <div className="space-y-4">
-                <Badge variant="primary">New</Badge>
-                <Badge variant="success" withIcon>
-                  Success
-                </Badge>
-                <Badge variant="danger">Error</Badge>
-                <Badge variant="outline" size="lg" rounded="lg">
-                  Outline
-                </Badge>
-                <Badge variant="default" className="uppercase tracking-wide">
-                  Beta
-                </Badge>
+            <div className="flex flex-col gap-y-5">
+              {/* Badge Demo */}
+              <div className="flex flex-col">
+                <h3 className="text-2xl font-semibold mb-3">Badge</h3>
+                <div className="space-x-4 flex">
+                  <Badge variant="primary">New</Badge>
+                  <Badge variant="success" withIcon>
+                    Success
+                  </Badge>
+                  <Badge variant="danger">Error</Badge>
+                  <Badge variant="outline" size="lg" rounded="lg">
+                    Outline
+                  </Badge>
+                  <Badge variant="default" className="uppercase tracking-wide">
+                    Beta
+                  </Badge>
+                </div>
               </div>
-            </div>
 
-            {/* Spinner Demo */}
-            <div className="flex flex-col items-center">
-              <h3 className="text-2xl font-semibold mb-6">Spinner</h3>
-              <div className="space-y-6">
-                <div className="flex items-center justify-center">
-                  <Spinner size="sm" />
-                  <span className="ml-3 text-[var(--muted)]">Small</span>
-                </div>
-                <div className="flex items-center justify-center">
-                  <Spinner size="md" />
-                  <span className="ml-3 text-[var(--muted)]">Medium</span>
-                </div>
-                <div className="flex items-center justify-center">
-                  <Spinner size="lg" />
-                  <span className="ml-3 text-[var(--muted)]">Large</span>
-                </div>
-                <div className="flex items-center justify-center">
-                  <Spinner size="xl" color="var(--primary)" />
-                  <span className="ml-3 text-[var(--muted)]">Extra Large</span>
+              {/* Spinner Demo */}
+              <div className="flex flex-col">
+                <h3 className="text-2xl font-semibold mb-3">Spinner</h3>
+                <div className="space-x-6 flex">
+                  <div className="flex items-center justify-center">
+                    <Spinner size="sm" />
+                    <span className="ml-3 text-[var(--muted)]">Small</span>
+                  </div>
+                  <div className="flex items-center justify-center">
+                    <Spinner size="md" />
+                    <span className="ml-3 text-[var(--muted)]">Medium</span>
+                  </div>
+                  <div className="flex items-center justify-center">
+                    <Spinner size="lg" />
+                    <span className="ml-3 text-[var(--muted)]">Large</span>
+                  </div>
+                  <div className="flex items-center justify-center">
+                    <Spinner size="xl" color="var(--primary)" />
+                    <span className="ml-3 text-[var(--muted)]">
+                      Extra Large
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>

@@ -6,7 +6,7 @@ export { default as Accordion } from "./components/Accordion";
 export { default as Tooltip } from "./components/Tooltip";
 export { default as Tabs } from "./components/Tabs";
 export { default as Dropdown } from "./components/Dropdown";
-export { default as Carousel } from "./components/Carousel";
+export { default as Canprousel } from "./components/Carousel";
 export { default as Navbar } from "./components/Navbar";
 export { default as ProgressBar } from "./components/ProgressBar";
 export { default as ThemeToggle } from "./components/ThemeToggle";
