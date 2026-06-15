@@ -1,33 +1,31 @@
-import React from "react";
 import { motion } from "framer-motion";
+import { cn } from "../utils/cn";
+
+const sizes = {
+  sm: { width: "2.5rem", height: "1.5rem", knob: "1rem" },
+  md: { width: "3rem", height: "1.75rem", knob: "1.25rem" },
+  lg: { width: "3.5rem", height: "2rem", knob: "1.5rem" },
+};
 
 const Switch = ({
   checked = false,
   onChange,
+  label,
+  labelPosition = "right",
   disabled = false,
   size = "md",
   className = "",
 }) => {
-  const sizes = {
-    sm: { width: "2.5rem", height: "1.5rem", knob: "1rem" },
-    md: { width: "3rem", height: "1.75rem", knob: "1.25rem" },
-    lg: { width: "3.5rem", height: "2rem", knob: "1.5rem" },
-  };
-
-  const handleClick = () => {
-    if (!disabled && onChange) {
-      onChange(!checked);
-    }
-  };
-
+  const s = sizes[size] || sizes.md;
+  const handleClick = () => !disabled && onChange?.(!checked);
   const handleKeyDown = (e) => {
     if ((e.key === "Enter" || e.key === " ") && !disabled) {
       e.preventDefault();
-      onChange(!checked);
+      onChange?.(!checked);
     }
   };
 
-  return (
+  const toggle = (
     <button
       type="button"
       role="switch"
@@ -35,31 +33,41 @@ const Switch = ({
       disabled={disabled}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
-      className={`relative inline-flex items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:ring-offset-2 ${
+      className={cn(
+        "relative inline-flex items-center rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]",
         disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
-      } ${className}`}
-      style={{
-        width: sizes[size].width,
-        height: sizes[size].height,
-      }}
+      )}
+      style={{ width: s.width, height: s.height }}
     >
-      <div
-        className={`absolute inset-0 rounded-full transition-colors ${
+      <span
+        className={cn(
+          "absolute inset-0 rounded-full transition-colors",
           checked ? "bg-[var(--primary)]" : "bg-[var(--border)]"
-        }`}
+        )}
       />
-      <motion.div
+      <motion.span
         className="absolute top-0.5 left-0.5 bg-white rounded-full shadow-md"
-        animate={{
-          x: checked ? `calc(100% - ${sizes[size].knob})` : "0rem",
-        }}
+        animate={{ x: checked ? `calc(100% - ${s.knob})` : "0rem" }}
         transition={{ type: "spring", stiffness: 500, damping: 30 }}
-        style={{
-          width: sizes[size].knob,
-          height: sizes[size].knob,
-        }}
+        style={{ width: s.knob, height: s.knob }}
       />
     </button>
+  );
+
+  if (!label) return <div className={className}>{toggle}</div>;
+
+  return (
+    <label
+      className={cn(
+        "inline-flex items-center gap-2 select-none",
+        disabled ? "cursor-not-allowed" : "cursor-pointer",
+        labelPosition === "left" && "flex-row-reverse",
+        className
+      )}
+    >
+      {toggle}
+      <span className="text-sm text-[var(--text)]">{label}</span>
+    </label>
   );
 };
 

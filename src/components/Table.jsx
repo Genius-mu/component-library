@@ -5,9 +5,13 @@ import { ChevronUp, ChevronDown } from "lucide-react";
 import { cn } from "../utils/cn";
 
 const Table = ({
-  columns = [], // [{ key, header, sortable, render }]
+  columns = [],
   data = [],
   sortable = true,
+  striped = false,
+  compact = false,
+  loading = false,
+  onRowClick,
   emptyMessage = "No data",
   className = "",
 }) => {
@@ -35,13 +39,10 @@ const Table = ({
     );
   };
 
+  const cellPad = compact ? "px-3 py-2" : "px-4 py-3";
+
   return (
-    <div
-      className={cn(
-        "w-full overflow-x-auto rounded-2xl border border-[var(--border)]",
-        className
-      )}
-    >
+    <div className={cn("w-full overflow-x-auto rounded-2xl border border-[var(--border)]", className)}>
       <table className="w-full text-left text-sm">
         <thead>
           <tr className="border-b border-[var(--border)] bg-[var(--surface)]">
@@ -53,19 +54,19 @@ const Table = ({
                   key={col.key}
                   onClick={() => toggleSort(col)}
                   className={cn(
-                    "px-4 py-3 font-semibold text-[var(--text)] whitespace-nowrap",
+                    cellPad,
+                    "font-semibold text-[var(--text)] whitespace-nowrap",
                     isSortable && "cursor-pointer select-none hover:text-[var(--primary)]"
                   )}
                 >
                   <span className="inline-flex items-center gap-1">
                     {col.header}
-                    {isSortable && active && (
-                      sort.dir === "asc" ? (
+                    {isSortable && active &&
+                      (sort.dir === "asc" ? (
                         <ChevronUp className="size-3.5" />
                       ) : (
                         <ChevronDown className="size-3.5" />
-                      )
-                    )}
+                      ))}
                   </span>
                 </th>
               );
@@ -73,12 +74,19 @@ const Table = ({
           </tr>
         </thead>
         <tbody>
-          {sorted.length === 0 ? (
+          {loading ? (
+            Array.from({ length: 3 }).map((_, r) => (
+              <tr key={r} className="border-b border-[var(--border)] last:border-0">
+                {columns.map((col) => (
+                  <td key={col.key} className={cellPad}>
+                    <div className="h-4 rounded bg-[var(--border)] animate-pulse" />
+                  </td>
+                ))}
+              </tr>
+            ))
+          ) : sorted.length === 0 ? (
             <tr>
-              <td
-                colSpan={columns.length}
-                className="px-4 py-8 text-center text-[var(--muted)]"
-              >
+              <td colSpan={columns.length} className="px-4 py-8 text-center text-[var(--muted)]">
                 {emptyMessage}
               </td>
             </tr>
@@ -89,10 +97,15 @@ const Table = ({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: i * 0.02 }}
-                className="border-b border-[var(--border)] last:border-0 hover:bg-[var(--surface-hover)] transition-colors"
+                onClick={() => onRowClick?.(row)}
+                className={cn(
+                  "border-b border-[var(--border)] last:border-0 transition-colors",
+                  striped && i % 2 === 1 && "bg-[var(--surface)]/50",
+                  onRowClick ? "cursor-pointer hover:bg-[var(--surface-hover)]" : "hover:bg-[var(--surface-hover)]"
+                )}
               >
                 {columns.map((col) => (
-                  <td key={col.key} className="px-4 py-3 text-[var(--text)]">
+                  <td key={col.key} className={cn(cellPad, "text-[var(--text)]")}>
                     {col.render ? col.render(row[col.key], row) : row[col.key]}
                   </td>
                 ))}

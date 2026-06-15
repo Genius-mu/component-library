@@ -1,30 +1,45 @@
 // Drawer.jsx
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import { cn } from "../utils/cn";
 
+const sizeMap = {
+  sm: { x: "w-72", y: "h-1/4" },
+  md: { x: "w-80", y: "h-1/3" },
+  lg: { x: "w-96", y: "h-1/2" },
+};
+
 const sideConfig = {
-  right: { class: "top-0 right-0 h-full w-80 max-w-[85vw]", from: { x: "100%" }, to: { x: 0 } },
-  left: { class: "top-0 left-0 h-full w-80 max-w-[85vw]", from: { x: "-100%" }, to: { x: 0 } },
-  top: { class: "top-0 left-0 w-full h-1/3", from: { y: "-100%" }, to: { y: 0 } },
-  bottom: { class: "bottom-0 left-0 w-full h-1/3", from: { y: "100%" }, to: { y: 0 } },
+  right: (sz) => ({ cls: `top-0 right-0 h-full ${sz.x} max-w-[85vw]`, from: { x: "100%" }, to: { x: 0 } }),
+  left: (sz) => ({ cls: `top-0 left-0 h-full ${sz.x} max-w-[85vw]`, from: { x: "-100%" }, to: { x: 0 } }),
+  top: (sz) => ({ cls: `top-0 left-0 w-full ${sz.y}`, from: { y: "-100%" }, to: { y: 0 } }),
+  bottom: (sz) => ({ cls: `bottom-0 left-0 w-full ${sz.y}`, from: { y: "100%" }, to: { y: 0 } }),
 };
 
 const Drawer = ({
   isOpen,
   onClose,
   side = "right",
+  size = "md",
   title,
   children,
   className = "",
 }) => {
-  const cfg = sideConfig[side] || sideConfig.right;
+  const sz = sizeMap[size] || sizeMap.md;
+  const cfg = (sideConfig[side] || sideConfig.right)(sz);
+  const panelRef = useRef(null);
 
   useEffect(() => {
+    if (!isOpen) return;
+    document.body.style.overflow = "hidden";
     const onEsc = (e) => e.key === "Escape" && onClose?.();
-    if (isOpen) document.addEventListener("keydown", onEsc);
-    return () => document.removeEventListener("keydown", onEsc);
+    document.addEventListener("keydown", onEsc);
+    requestAnimationFrame(() => panelRef.current?.focus());
+    return () => {
+      document.removeEventListener("keydown", onEsc);
+      document.body.style.overflow = "";
+    };
   }, [isOpen, onClose]);
 
   return (
@@ -38,14 +53,19 @@ const Drawer = ({
           onClick={onClose}
         >
           <motion.aside
+            ref={panelRef}
+            tabIndex={-1}
+            role="dialog"
+            aria-modal="true"
+            aria-label={title || "Drawer"}
             initial={cfg.from}
             animate={cfg.to}
             exit={cfg.from}
             transition={{ type: "spring", stiffness: 300, damping: 32 }}
             onClick={(e) => e.stopPropagation()}
             className={cn(
-              "absolute bg-[var(--surface)] border border-[var(--border)] p-6 overflow-auto",
-              cfg.class,
+              "absolute bg-[var(--surface)] border border-[var(--border)] p-6 overflow-auto focus:outline-none",
+              cfg.cls,
               className
             )}
           >

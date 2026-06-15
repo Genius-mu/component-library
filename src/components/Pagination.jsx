@@ -1,5 +1,12 @@
-import React from "react";
+// Pagination.jsx
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { cn } from "../utils/cn";
+
+const sizes = {
+  sm: "px-2.5 py-1.5 text-xs",
+  md: "px-3 py-2 text-sm",
+  lg: "px-4 py-2.5 text-base",
+};
 
 const Pagination = ({
   currentPage,
@@ -7,17 +14,20 @@ const Pagination = ({
   onPageChange,
   showFirstLast = true,
   maxVisiblePages = 5,
+  size = "md",
   className = "",
 }) => {
+  const pad = sizes[size] || sizes.md;
+  const base =
+    "font-medium rounded-lg border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]/50";
+  const idle =
+    "text-[var(--muted)] bg-[var(--surface)] border-[var(--border)] hover:bg-[var(--surface-hover)]";
+
   const getVisiblePages = () => {
     const delta = Math.floor(maxVisiblePages / 2);
     let start = Math.max(1, currentPage - delta);
     let end = Math.min(totalPages, start + maxVisiblePages - 1);
-
-    if (end - start + 1 < maxVisiblePages) {
-      start = Math.max(1, end - maxVisiblePages + 1);
-    }
-
+    if (end - start + 1 < maxVisiblePages) start = Math.max(1, end - maxVisiblePages + 1);
     return Array.from({ length: end - start + 1 }, (_, i) => start + i);
   };
 
@@ -26,72 +36,59 @@ const Pagination = ({
   return (
     <nav
       aria-label="Pagination"
-      className={`flex items-center justify-center space-x-1 ${className}`}
+      className={cn("flex items-center justify-center gap-1", className)}
     >
-      {/* Previous Button */}
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="flex items-center px-3 py-2 text-sm font-medium text-[var(--muted)] bg-[var(--surface)] border border-[var(--border)] rounded-lg hover:bg-[var(--hover)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className={cn(base, idle, pad, "flex items-center disabled:opacity-50 disabled:cursor-not-allowed")}
         aria-label="Previous page"
       >
-        <ChevronLeft className="w-4 h-4" />
+        <ChevronLeft className="size-4" />
       </button>
 
-      {/* First Page */}
       {showFirstLast && visiblePages[0] > 1 && (
         <>
-          <button
-            onClick={() => onPageChange(1)}
-            className="px-3 py-2 text-sm font-medium text-[var(--muted)] bg-[var(--surface)] border border-[var(--border)] rounded-lg hover:bg-[var(--hover)] transition-colors"
-          >
-            1
-          </button>
-          {visiblePages[0] > 2 && (
-            <span className="px-2 py-2 text-[var(--muted)]">...</span>
-          )}
+          <button onClick={() => onPageChange(1)} className={cn(base, idle, pad)}>1</button>
+          {visiblePages[0] > 2 && <span className="px-2 text-[var(--muted)]">…</span>}
         </>
       )}
 
-      {/* Page Numbers */}
       {visiblePages.map((page) => (
         <button
           key={page}
           onClick={() => onPageChange(page)}
-          className={`px-3 py-2 text-sm font-medium rounded-lg border transition-colors ${
+          aria-current={page === currentPage ? "page" : undefined}
+          className={cn(
+            base,
+            pad,
             page === currentPage
               ? "bg-[var(--primary)] text-white border-[var(--primary)]"
-              : "text-[var(--muted)] bg-[var(--surface)] border-[var(--border)] hover:bg-[var(--hover)]"
-          }`}
-          aria-current={page === currentPage ? "page" : undefined}
+              : idle
+          )}
         >
           {page}
         </button>
       ))}
 
-      {/* Last Page */}
       {showFirstLast && visiblePages[visiblePages.length - 1] < totalPages && (
         <>
           {visiblePages[visiblePages.length - 1] < totalPages - 1 && (
-            <span className="px-2 py-2 text-[var(--muted)]">...</span>
+            <span className="px-2 text-[var(--muted)]">…</span>
           )}
-          <button
-            onClick={() => onPageChange(totalPages)}
-            className="px-3 py-2 text-sm font-medium text-[var(--muted)] bg-[var(--surface)] border border-[var(--border)] rounded-lg hover:bg-[var(--hover)] transition-colors"
-          >
+          <button onClick={() => onPageChange(totalPages)} className={cn(base, idle, pad)}>
             {totalPages}
           </button>
         </>
       )}
 
-      {/* Next Button */}
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="flex items-center px-3 py-2 text-sm font-medium text-[var(--muted)] bg-[var(--surface)] border border-[var(--border)] rounded-lg hover:bg-[var(--hover)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className={cn(base, idle, pad, "flex items-center disabled:opacity-50 disabled:cursor-not-allowed")}
         aria-label="Next page"
       >
-        <ChevronRight className="w-4 h-4" />
+        <ChevronRight className="size-4" />
       </button>
     </nav>
   );

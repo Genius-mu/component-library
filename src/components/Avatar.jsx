@@ -1,5 +1,5 @@
 // Avatar.jsx
-import { useState } from "react";
+import { useState, Children } from "react";
 import { motion } from "framer-motion";
 import { cn } from "../utils/cn";
 
@@ -18,24 +18,25 @@ const getInitials = (name = "") =>
     .map((w) => w[0]?.toUpperCase() || "")
     .join("");
 
+const statusColors = {
+  online: "bg-green-500",
+  offline: "bg-[var(--muted)]",
+  busy: "bg-red-500",
+  away: "bg-yellow-500",
+};
+
 const Avatar = ({
   src,
   alt = "",
   name = "",
   size = "md",
-  status, // "online" | "offline" | "busy" | "away"
+  status,
+  ring = false,
   className = "",
   ...props
 }) => {
   const [errored, setErrored] = useState(false);
   const showImage = src && !errored;
-
-  const statusColors = {
-    online: "bg-green-500",
-    offline: "bg-[var(--muted)]",
-    busy: "bg-red-500",
-    away: "bg-yellow-500",
-  };
 
   return (
     <div className={cn("relative inline-flex shrink-0", className)} {...props}>
@@ -43,9 +44,9 @@ const Avatar = ({
         whileHover={{ scale: 1.05 }}
         transition={{ type: "spring", stiffness: 300, damping: 20 }}
         className={cn(
-          "flex items-center justify-center rounded-full overflow-hidden font-semibold select-none",
-          "bg-[var(--surface)] border border-[var(--border)] text-[var(--text)]",
-          sizes[size]
+          "flex items-center justify-center rounded-full overflow-hidden font-semibold select-none bg-[var(--surface)] border border-[var(--border)] text-[var(--text)]",
+          ring && "ring-2 ring-[var(--primary)] ring-offset-2 ring-offset-[var(--bg)]",
+          sizes[size] || sizes.md
         )}
       >
         {showImage ? (
@@ -67,6 +68,32 @@ const Avatar = ({
             statusColors[status]
           )}
         />
+      )}
+    </div>
+  );
+};
+
+export const AvatarGroup = ({ children, max, size = "md", className = "" }) => {
+  const all = Children.toArray(children);
+  const shown = max ? all.slice(0, max) : all;
+  const overflow = max ? all.length - max : 0;
+
+  return (
+    <div className={cn("flex items-center -space-x-3", className)}>
+      {shown.map((child, i) => (
+        <div key={i} className="ring-2 ring-[var(--bg)] rounded-full">
+          {child}
+        </div>
+      ))}
+      {overflow > 0 && (
+        <div
+          className={cn(
+            "flex items-center justify-center rounded-full bg-[var(--surface)] border border-[var(--border)] text-[var(--muted)] font-semibold ring-2 ring-[var(--bg)]",
+            sizes[size] || sizes.md
+          )}
+        >
+          {`+${overflow}`}
+        </div>
       )}
     </div>
   );

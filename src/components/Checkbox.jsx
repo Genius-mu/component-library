@@ -1,38 +1,53 @@
 // Checkbox.jsx
+import { useId } from "react";
 import { motion } from "framer-motion";
-import { Check } from "lucide-react";
+import { Check, Minus } from "lucide-react";
 import { cn } from "../utils/cn";
+
+const sizes = {
+  sm: { box: "size-4", icon: "size-3" },
+  md: { box: "size-5", icon: "size-3.5" },
+  lg: { box: "size-6", icon: "size-4" },
+};
 
 const Checkbox = ({
   checked = false,
+  indeterminate = false,
   onChange,
   label,
+  description,
+  size = "md",
   disabled = false,
   id,
   className = "",
   ...props
 }) => {
+  const autoId = useId();
+  const cbId = id || autoId;
+  const s = sizes[size] || sizes.md;
+  const active = checked || indeterminate;
   const toggle = () => !disabled && onChange?.(!checked);
 
   return (
     <label
-      htmlFor={id}
+      htmlFor={cbId}
       className={cn(
-        "inline-flex items-center gap-2 select-none",
+        "inline-flex items-start gap-2 select-none",
         disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer",
         className
       )}
     >
       <button
-        id={id}
+        id={cbId}
         type="button"
         role="checkbox"
-        aria-checked={checked}
+        aria-checked={indeterminate ? "mixed" : checked}
         disabled={disabled}
         onClick={toggle}
         className={cn(
-          "flex items-center justify-center size-5 rounded-md border transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:ring-offset-2 focus:ring-offset-[var(--bg)]",
-          checked
+          "flex items-center justify-center rounded-md border transition-colors mt-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]",
+          s.box,
+          active
             ? "bg-[var(--primary)] border-[var(--primary)]"
             : "bg-[var(--surface)] border-[var(--border)]"
         )}
@@ -40,14 +55,23 @@ const Checkbox = ({
       >
         <motion.span
           initial={false}
-          animate={{ scale: checked ? 1 : 0, opacity: checked ? 1 : 0 }}
+          animate={{ scale: active ? 1 : 0, opacity: active ? 1 : 0 }}
           transition={{ type: "spring", stiffness: 500, damping: 30 }}
         >
-          <Check className="size-3.5 text-white" strokeWidth={3} />
+          {indeterminate ? (
+            <Minus className={cn(s.icon, "text-white")} strokeWidth={3} />
+          ) : (
+            <Check className={cn(s.icon, "text-white")} strokeWidth={3} />
+          )}
         </motion.span>
       </button>
-      {label && (
-        <span className="text-sm text-[var(--text)]">{label}</span>
+      {(label || description) && (
+        <span className="flex flex-col">
+          {label && <span className="text-sm text-[var(--text)]">{label}</span>}
+          {description && (
+            <span className="text-xs text-[var(--muted)]">{description}</span>
+          )}
+        </span>
       )}
     </label>
   );
