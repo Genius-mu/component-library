@@ -61,19 +61,6 @@ function HomePage() {
     );
   };
 
-  // Sample carousel slides
-  const carouselSlides = [
-    <div className="h-full bg-gradient-to-br from-teal-900 to-blue-900 flex items-center justify-center text-white text-4xl font-bold">
-      Slide 1 – Premium Feel
-    </div>,
-    <div className="h-full bg-gradient-to-br from-purple-900 to-pink-900 flex items-center justify-center text-white text-4xl font-bold">
-      Slide 2 – Smooth Animations
-    </div>,
-    <div className="h-full bg-gradient-to-br from-green-900 to-emerald-900 flex items-center justify-center text-white text-4xl font-bold">
-      Slide 3 – Reusable Components
-    </div>,
-  ];
-
   return (
     <>
       <ProgressBar />

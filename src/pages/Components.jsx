@@ -29,11 +29,6 @@ const Components = () => {
     { title: "Theme Toggle", id: "theme-toggle" },
   ];
 
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text);
-    // Optional: Add a toast notification here later
-  };
-
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
       {/* Header */}

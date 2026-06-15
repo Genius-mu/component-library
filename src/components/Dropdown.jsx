@@ -43,6 +43,7 @@ const Dropdown = ({ trigger, items, onSelect, className = "" }) => {
                 <button
                   onClick={() => {
                     item.onClick?.();
+                    onSelect?.(item);
                     setIsOpen(false);
                   }}
                   className={`w-full text-left px-4 py-3 text-[var(--text)] hover:bg-[var(--surface-hover)] transition-colors ${

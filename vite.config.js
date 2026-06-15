@@ -8,21 +8,32 @@ export default defineConfig({
   build: {
     lib: {
       entry: resolve(__dirname, "src/index.js"),
-      name: "CompostickLibrary", // Changed
-      fileName: (format) => `compostick-library.${format}.js`, // Changed
+      name: "Morgu",
+      fileName: (format) => `morgu.${format}.js`,
     },
     rollupOptions: {
-      external: ["react", "react-dom", "framer-motion", "lucide-react"],
+      // Externalize peer deps AND their sub-paths (react/jsx-runtime,
+      // react-dom/client, etc.) so they aren't bundled into the library.
+      external: [
+        /^react($|\/)/,
+        /^react-dom($|\/)/,
+        /^framer-motion($|\/)/,
+        /^lucide-react($|\/)/,
+      ],
       output: {
+        assetFileNames: (asset) =>
+          asset.name?.endsWith(".css") ? "morgu.css" : "[name][extname]",
         globals: {
           react: "React",
           "react-dom": "ReactDOM",
-          "framer-motion": "motion", // Changed to 'motion' (common global)
+          "react/jsx-runtime": "jsxRuntime",
+          "framer-motion": "motion",
           "lucide-react": "lucideReact",
         },
       },
     },
     cssCodeSplit: false,
     emptyOutDir: true,
+    copyPublicDir: false,
   },
 });
