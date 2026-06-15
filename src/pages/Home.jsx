@@ -1,20 +1,22 @@
 // Home.jsx
 import { useState, useEffect } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
   ArrowRight,
-  Mail,
-  Lock,
   Copy,
   Check,
+  Boxes,
+  Sparkles,
+  Palette,
+  ShieldCheck,
+  Braces,
+  Terminal,
+  Mail,
+  Lock,
   User,
   Settings,
   LogOut,
-  Code2,
-  Palette,
-  Zap,
-  ChevronDown,
 } from "lucide-react";
 
 import { cn } from "../utils/cn";
@@ -45,60 +47,123 @@ import Skeleton from "../components/Skeleton";
 import Table from "../components/Table";
 import Avatar, { AvatarGroup } from "../components/Avatar";
 
-/* ---------- Glass primitives (the page's signature) ---------- */
+/* Scope the brand accent to the ether's violet — this also re-skins every
+   library component on the page (a live demo of the theming system). */
+const ACCENT = {
+  "--primary": "#5227FF",
+  "--primary-hover": "#6743ff",
+  "--primary-active": "#3f1ae0",
+};
 
-const GlassCard = ({ children, className = "" }) => (
-  <div
-    className={cn(
-      "relative rounded-3xl border border-white/10 bg-white/[0.035] backdrop-blur-2xl",
-      "shadow-[0_8px_40px_-12px_rgba(0,0,0,0.6)] p-6",
-      className,
-    )}
-  >
-    {/* top light-edge */}
-    <span className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
-    {children}
-  </div>
+/* ---------- Building blocks ---------- */
+
+const Mark = () => (
+  <span className="flex items-center gap-2.5">
+    <span className="grid place-items-center size-8 rounded-lg bg-[#5227FF] font-mono font-bold text-white">
+      M
+    </span>
+    <span className="font-mono font-semibold tracking-tight text-white">
+      morgu
+    </span>
+  </span>
 );
 
-const Eyebrow = ({ children }) => (
-  <p className="flex items-center justify-center gap-2 font-mono text-xs uppercase tracking-[0.25em] text-[#C8B6E2]">
-    <span className="size-1.5 rounded-full bg-[#5227FF]" />
+const Eyebrow = ({ children, center = false }) => (
+  <p
+    className={cn(
+      "font-mono text-xs uppercase tracking-[0.3em] text-white/40",
+      center && "text-center",
+    )}
+  >
     {children}
   </p>
 );
 
-const Section = ({ eyebrow, title, lead, children }) => (
+const SectionHead = ({ eyebrow, title, lead }) => (
+  <div className="text-center mb-14">
+    {eyebrow && <Eyebrow center>{eyebrow}</Eyebrow>}
+    <h2 className="mt-4 text-3xl md:text-5xl font-bold tracking-tight text-white">
+      {title}
+    </h2>
+    {lead && <p className="mt-4 text-white/50 max-w-2xl mx-auto">{lead}</p>}
+  </div>
+);
+
+const Section = ({ children, divide = true, className = "" }) => (
   <motion.section
-    initial={{ opacity: 0, y: 28 }}
+    initial={{ opacity: 0, y: 24 }}
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true, margin: "-80px" }}
-    transition={{ duration: 0.6, ease: "easeOut" }}
-    className="my-24 max-w-6xl mx-auto"
+    transition={{ duration: 0.55, ease: "easeOut" }}
+    className={cn(
+      "max-w-6xl mx-auto px-6 py-24",
+      divide && "border-t border-white/[0.07]",
+      className,
+    )}
   >
-    <div className="text-center mb-10">
-      {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
-      <h2 className="mt-3 text-3xl md:text-4xl font-bold tracking-tight text-white">
-        {title}
-      </h2>
-      {lead && <p className="mt-3 text-white/55 max-w-2xl mx-auto">{lead}</p>}
-    </div>
     {children}
   </motion.section>
 );
 
-const Label = ({ children }) => (
-  <p className="font-mono text-[0.7rem] uppercase tracking-widest text-white/40 mb-4">
+const Panel = ({ label, children, className = "" }) => (
+  <div
+    className={cn(
+      "rounded-2xl border border-white/10 bg-white/[0.025] p-6 backdrop-blur-xl",
+      className,
+    )}
+  >
+    {label && (
+      <p className="font-mono text-[0.7rem] uppercase tracking-widest text-white/40 mb-5">
+        {label}
+      </p>
+    )}
     {children}
-  </p>
+  </div>
 );
 
-/* ---------- Page ---------- */
+const Tile = ({ icon: Icon, label }) => (
+  <div className="flex flex-col items-center gap-2">
+    <div className="grid place-items-center size-16 rounded-2xl border border-white/12 bg-white/[0.04] text-white/80">
+      <Icon className="size-6" />
+    </div>
+    <span className="font-mono text-xs text-white/50">{label}</span>
+  </div>
+);
+
+const Dash = () => (
+  <span className="flex-1 mx-2 border-t border-dashed border-white/15" />
+);
+
+const Step = ({ n, title, children }) => (
+  <div className="text-center">
+    <div className="mx-auto grid place-items-center size-11 rounded-full border border-white/15 font-mono text-sm text-white/70 mb-5">
+      {n}
+    </div>
+    <h3 className="text-lg font-semibold text-white mb-2">{title}</h3>
+    <p className="text-sm text-white/50 leading-relaxed">{children}</p>
+  </div>
+);
+
+const InstallPill = ({ copied, onCopy }) => (
+  <button
+    onClick={onCopy}
+    className="group flex items-center gap-3 rounded-xl border border-white/15 bg-white/5 px-5 py-3.5 font-mono text-sm text-white/85 hover:bg-white/10 transition-colors"
+  >
+    <span className="text-emerald-400">$</span> npm i morgu
+    {copied ? (
+      <Check className="size-4 text-emerald-400" />
+    ) : (
+      <Copy className="size-4 opacity-50 group-hover:opacity-100" />
+    )}
+  </button>
+);
+
+/* ---------- Data ---------- */
 
 const FRAMEWORKS = [
   { label: "React", value: "react" },
-  { label: "Vue", value: "vue" },
-  { label: "Svelte", value: "svelte" },
+  { label: "Next.js", value: "next" },
+  { label: "Remix", value: "remix" },
 ];
 
 const USERS = [
@@ -106,6 +171,8 @@ const USERS = [
   { id: 2, name: "Alan Turing", role: "Researcher", presence: "away" },
   { id: 3, name: "Grace Hopper", role: "Admiral", presence: "busy" },
 ];
+
+/* ---------- Page ---------- */
 
 function HomePage() {
   const toast = useToast();
@@ -121,10 +188,6 @@ function HomePage() {
   const [volume, setVolume] = useState(60);
   const [bio, setBio] = useState("");
   const [progress, setProgress] = useState(20);
-
-  const { scrollYProgress } = useScroll();
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.18], [1, 0]);
-  const heroY = useTransform(scrollYProgress, [0, 0.18], [0, -60]);
 
   useEffect(() => {
     const t = setInterval(
@@ -170,12 +233,10 @@ function HomePage() {
   ];
 
   return (
-    <>
+    <div style={ACCENT}>
       <ProgressBar />
       <Navbar
-        brand={
-          <span className="font-mono tracking-tight text-white">morgu</span>
-        }
+        brand={<Mark />}
         links={[
           { label: "Components", href: "/components" },
           { label: "Docs", href: "/docs" },
@@ -183,124 +244,118 @@ function HomePage() {
         linkComponent={Link}
       />
 
-      <div className="px-6 md:px-12">
-        {/* ---------- Hero ---------- */}
-        <section className="relative min-h-screen flex flex-col items-center justify-center text-center">
-          {/* legibility scrim so type holds over the moving ether */}
-          <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[60vh] rounded-full bg-black/40 blur-3xl" />
-
-          <motion.div
-            style={{ opacity: heroOpacity, y: heroY }}
-            className="relative z-10 max-w-4xl"
+      {/* ---------- Hero (asymmetric, ether shows through) ---------- */}
+      <header className="relative max-w-6xl mx-auto px-6 pt-36 pb-24 grid lg:grid-cols-2 gap-16 items-center">
+        <div>
+          <Eyebrow>react · tailwind v4 · framer motion</Eyebrow>
+          <motion.h1
+            initial={{ opacity: 0, y: 28 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="mt-6 text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.02] text-white"
           >
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              <Eyebrow>react · tailwind v4 · framer motion</Eyebrow>
-            </motion.div>
+            The component layer
+            <br />
+            your app has been
+            <br />
+            <span className="text-[#B9A6F2]">missing</span>
+          </motion.h1>
+          <p className="mt-6 text-lg text-white/60 max-w-lg leading-relaxed">
+            Describe your UI and ship it. Morgu gives you 29 animated,
+            themeable, accessible React components — fully typed, drop-in ready.
+          </p>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.9, ease: "easeOut" }}
-              className="mt-6 text-7xl md:text-8xl lg:text-9xl font-extrabold tracking-tighter leading-[0.9] bg-gradient-to-br from-white via-white to-[#C8B6E2] bg-clip-text text-transparent"
-            >
-              Morgu
-            </motion.h1>
+          <div className="mt-9 flex flex-wrap items-center gap-3">
+            <Link to="/components">
+              <Button size="lg" icon={ArrowRight} iconPosition="right">
+                Explore components
+              </Button>
+            </Link>
+            <Link to="/docs">
+              <Button size="lg" variant="outline">
+                Read the docs
+              </Button>
+            </Link>
+          </div>
 
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4, duration: 0.8 }}
-              className="mt-6 text-lg md:text-xl text-white/70 max-w-2xl mx-auto"
-            >
-              A premium React component library — animated, themeable,
-              accessible, and fully typed. Twenty-nine components that feel
-              alive.
-            </motion.p>
+          {/* terminal */}
+          <div className="mt-10 rounded-2xl border border-white/10 bg-black/60 backdrop-blur-xl p-5 font-mono text-sm leading-relaxed">
+            <p>
+              <span className="text-emerald-400">$</span> npm i morgu
+            </p>
+            <p className="text-white/40">+ morgu@0.1.0 · 0 runtime deps</p>
+            <p>
+              <span className="text-emerald-400">$</span> import
+              &quot;morgu/styles.css&quot;
+            </p>
+            <p className="text-white/70">✓ 29 components ready</p>
+            <p className="text-white/70">✓ dark + light themes</p>
+            <p className="text-[#B9A6F2]">morgu is wired up ✦</p>
+          </div>
+        </div>
 
-            <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link to="/components">
-                <Button size="lg" icon={ArrowRight} iconPosition="right">
-                  Explore components
-                </Button>
-              </Link>
-              <Tooltip text={copied ? "Copied" : "Copy to clipboard"}>
-                <button
-                  onClick={handleCopy}
-                  className="group flex items-center gap-3 rounded-2xl border border-white/15 bg-white/5 backdrop-blur-xl px-5 py-4 font-mono text-sm text-white/80 hover:bg-white/10 transition-colors"
-                >
-                  <span className="text-[#FF9FFC]">$</span> npm i morgu
-                  {copied ? (
-                    <Check className="size-4 text-[#FF9FFC]" />
-                  ) : (
-                    <Copy className="size-4 opacity-60 group-hover:opacity-100" />
-                  )}
-                </button>
-              </Tooltip>
+        {/* node-graph of what you get */}
+        <div className="hidden lg:block">
+          <div className="space-y-10">
+            <div className="flex items-center">
+              <Tile icon={Boxes} label="Components" />
+              <Dash />
+              <Tile icon={Sparkles} label="Animated" />
+              <Dash />
+              <Tile icon={Palette} label="Themeable" />
             </div>
-          </motion.div>
+            <div className="flex items-center justify-center gap-16">
+              <Tile icon={ShieldCheck} label="Accessible" />
+              <Tile icon={Braces} label="Typed" />
+              <Tile icon={Terminal} label="One import" />
+            </div>
+          </div>
+        </div>
+      </header>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.1 }}
-            className="absolute bottom-10 flex flex-col items-center gap-2 text-white/40"
-          >
-            <span className="font-mono text-[0.7rem] uppercase tracking-widest">
-              Scroll
-            </span>
-            <motion.span
-              animate={{ y: [0, 6, 0] }}
-              transition={{ duration: 1.6, repeat: Infinity }}
-            >
-              <ChevronDown className="size-4" />
-            </motion.span>
-          </motion.div>
-        </section>
+      {/* ---------- Structured body shell (calms the ether) ---------- */}
+      <div className="relative bg-[#06060a]/85 backdrop-blur-2xl border-t border-white/[0.07]">
+        {/* Agnostic strapline */}
+        <Section divide={false} className="py-20 text-center">
+          <Eyebrow center>language &amp; framework agnostic</Eyebrow>
+          <h2 className="mt-4 text-3xl md:text-5xl font-bold tracking-tight text-white max-w-3xl mx-auto">
+            One cohesive system for every screen
+          </h2>
+        </Section>
 
-        {/* ---------- Value props ---------- */}
-        <Section eyebrow="why morgu" title="Built to feel premium">
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              {
-                icon: Code2,
-                title: "29 components",
-                body: "From buttons to sortable tables — composable and accessible.",
-              },
-              {
-                icon: Palette,
-                title: "Themeable",
-                body: "Every color is a CSS variable. Dark and light, your palette.",
-              },
-              {
-                icon: Zap,
-                title: "Animated",
-                body: "Framer Motion springs, focus traps, reduced-motion aware.",
-              },
-            ].map((f) => (
-              <GlassCard key={f.title}>
-                <f.icon className="size-9 text-[#C8B6E2] mb-4" />
-                <h3 className="text-xl font-semibold text-white mb-1">
-                  {f.title}
-                </h3>
-                <p className="text-white/55 text-sm">{f.body}</p>
-              </GlassCard>
-            ))}
+        {/* Steps */}
+        <Section>
+          <SectionHead
+            eyebrow="get started"
+            title="Up and running in four steps"
+          />
+          <div className="grid md:grid-cols-4 gap-10">
+            <Step n="01" title="Install">
+              Add the package and its peers with one command.
+            </Step>
+            <Step n="02" title="Import styles">
+              Pull in{" "}
+              <span className="font-mono text-white/70">morgu/styles.css</span>{" "}
+              once.
+            </Step>
+            <Step n="03" title="Add providers">
+              Wrap your app in Theme and Toast providers.
+            </Step>
+            <Step n="04" title="Use components">
+              Import and compose — every prop is typed.
+            </Step>
           </div>
         </Section>
 
-        {/* ---------- Buttons ---------- */}
-        <Section
-          eyebrow="actions"
-          title="Buttons"
-          lead="Six variants, three sizes, loading and icon states."
-        >
-          <GlassCard className="p-8">
-            <Label>Variants</Label>
-            <div className="flex flex-wrap gap-3 mb-8">
+        {/* Buttons */}
+        <Section>
+          <SectionHead
+            eyebrow="actions"
+            title="Buttons"
+            lead="Six variants, three sizes, loading and icon states."
+          />
+          <Panel label="Variants" className="mb-6">
+            <div className="flex flex-wrap gap-3">
               <Button>Primary</Button>
               <Button variant="secondary">Secondary</Button>
               <Button variant="outline">Outline</Button>
@@ -308,7 +363,8 @@ function HomePage() {
               <Button variant="danger">Danger</Button>
               <Button variant="success">Success</Button>
             </div>
-            <Label>Sizes &amp; states</Label>
+          </Panel>
+          <Panel label="Sizes & states">
             <div className="flex flex-wrap items-center gap-3">
               <Button size="sm">Small</Button>
               <Button size="md">Medium</Button>
@@ -319,18 +375,18 @@ function HomePage() {
               </Button>
               <Button disabled>Disabled</Button>
             </div>
-          </GlassCard>
+          </Panel>
         </Section>
 
-        {/* ---------- Form controls ---------- */}
-        <Section
-          eyebrow="inputs"
-          title="Form controls"
-          lead="Inputs, selects, toggles and sliders — all keyboard accessible."
-        >
+        {/* Form */}
+        <Section>
+          <SectionHead
+            eyebrow="inputs"
+            title="Form controls"
+            lead="Inputs, selects, toggles and sliders — all keyboard accessible."
+          />
           <div className="grid md:grid-cols-2 gap-6">
-            <GlassCard className="p-8">
-              <Label>Text fields</Label>
+            <Panel label="Text fields">
               <div className="space-y-5">
                 <Input
                   label="Email"
@@ -355,9 +411,8 @@ function HomePage() {
                   onChange={(e) => setBio(e.target.value)}
                 />
               </div>
-            </GlassCard>
-            <GlassCard className="p-8">
-              <Label>Choices</Label>
+            </Panel>
+            <Panel label="Choices">
               <div className="space-y-6">
                 <Select
                   label="Framework"
@@ -394,19 +449,18 @@ function HomePage() {
                   formatValue={(v) => `${v}%`}
                 />
               </div>
-            </GlassCard>
+            </Panel>
           </div>
         </Section>
 
-        {/* ---------- Overlays ---------- */}
-        <Section eyebrow="overlays" title="Modals, drawers &amp; menus">
+        {/* Overlays */}
+        <Section>
+          <SectionHead eyebrow="overlays" title="Modals, drawers & menus" />
           <div className="grid md:grid-cols-3 gap-6">
-            <GlassCard>
-              <Label>Modal</Label>
+            <Panel label="Modal">
               <Button onClick={() => setModalOpen(true)}>Open modal</Button>
-            </GlassCard>
-            <GlassCard>
-              <Label>Drawer</Label>
+            </Panel>
+            <Panel label="Drawer">
               <div className="flex flex-wrap gap-2">
                 <Button
                   variant="secondary"
@@ -430,9 +484,8 @@ function HomePage() {
                   Bottom
                 </Button>
               </div>
-            </GlassCard>
-            <GlassCard>
-              <Label>Dropdown</Label>
+            </Panel>
+            <Panel label="Dropdown">
               <Dropdown
                 trigger={
                   <span className="flex items-center gap-2">
@@ -458,15 +511,15 @@ function HomePage() {
                   },
                 ]}
               />
-            </GlassCard>
+            </Panel>
           </div>
         </Section>
 
-        {/* ---------- Feedback ---------- */}
-        <Section eyebrow="feedback" title="Status &amp; notifications">
+        {/* Feedback */}
+        <Section>
+          <SectionHead eyebrow="feedback" title="Status & notifications" />
           <div className="grid md:grid-cols-2 gap-6">
-            <GlassCard className="p-8">
-              <Label>Alerts</Label>
+            <Panel label="Alerts">
               <div className="space-y-3">
                 <Alert variant="info" title="Heads up">
                   This is an informational message.
@@ -489,10 +542,9 @@ function HomePage() {
                   This action is irreversible.
                 </Alert>
               </div>
-            </GlassCard>
+            </Panel>
             <div className="space-y-6">
-              <GlassCard>
-                <Label>Toasts — useToast()</Label>
+              <Panel label="Toasts — useToast()">
                 <div className="flex flex-wrap gap-3">
                   <Button
                     size="sm"
@@ -521,9 +573,8 @@ function HomePage() {
                     Error
                   </Button>
                 </div>
-              </GlassCard>
-              <GlassCard>
-                <Label>Badges, spinners &amp; progress</Label>
+              </Panel>
+              <Panel label="Badges, spinners & progress">
                 <div className="flex flex-wrap items-center gap-3 mb-4">
                   <Badge variant="primary">New</Badge>
                   <Badge variant="success" dot>
@@ -539,56 +590,52 @@ function HomePage() {
                   <Spinner variant="dots" />
                 </div>
                 <ProgressBar value={progress} max={100} showLabel height={8} />
-              </GlassCard>
+              </Panel>
             </div>
           </div>
         </Section>
 
-        {/* ---------- Data ---------- */}
-        <Section eyebrow="data" title="Tables, avatars &amp; skeletons">
-          <div className="space-y-6">
-            <GlassCard className="p-8">
-              <Label>Sortable table — click a row</Label>
-              <Table
-                columns={tableColumns}
-                data={USERS}
-                striped
-                onRowClick={(row) => toast.info(`Selected ${row.name}`)}
-              />
-            </GlassCard>
-            <div className="grid md:grid-cols-2 gap-6">
-              <GlassCard className="p-8">
-                <Label>Avatars</Label>
-                <div className="flex items-center gap-6">
-                  <Avatar name="Ada Lovelace" status="online" />
-                  <Avatar name="Alan Turing" size="lg" ring />
-                  <AvatarGroup max={3}>
-                    <Avatar name="A B" />
-                    <Avatar name="C D" />
-                    <Avatar name="E F" />
-                    <Avatar name="G H" />
-                    <Avatar name="I J" />
-                  </AvatarGroup>
-                </div>
-              </GlassCard>
-              <GlassCard className="p-8">
-                <Label>Skeleton loading</Label>
-                <div className="flex gap-4">
-                  <Skeleton variant="circle" height="56px" width="56px" />
-                  <div className="flex-1 space-y-2 pt-1">
-                    <Skeleton variant="text" lines={3} />
-                  </div>
-                </div>
-              </GlassCard>
-            </div>
-          </div>
-        </Section>
-
-        {/* ---------- Navigation ---------- */}
-        <Section eyebrow="navigation" title="Tabs, accordion &amp; more">
+        {/* Data */}
+        <Section>
+          <SectionHead eyebrow="data" title="Tables, avatars & skeletons" />
+          <Panel label="Sortable table — click a row" className="mb-6">
+            <Table
+              columns={tableColumns}
+              data={USERS}
+              striped
+              onRowClick={(row) => toast.info(`Selected ${row.name}`)}
+            />
+          </Panel>
           <div className="grid md:grid-cols-2 gap-6">
-            <GlassCard className="p-8">
-              <Label>Tabs — pill</Label>
+            <Panel label="Avatars">
+              <div className="flex items-center gap-6">
+                <Avatar name="Ada Lovelace" status="online" />
+                <Avatar name="Alan Turing" size="lg" ring />
+                <AvatarGroup max={3}>
+                  <Avatar name="A B" />
+                  <Avatar name="C D" />
+                  <Avatar name="E F" />
+                  <Avatar name="G H" />
+                  <Avatar name="I J" />
+                </AvatarGroup>
+              </div>
+            </Panel>
+            <Panel label="Skeleton loading">
+              <div className="flex gap-4">
+                <Skeleton variant="circle" height="56px" width="56px" />
+                <div className="flex-1 space-y-2 pt-1">
+                  <Skeleton variant="text" lines={3} />
+                </div>
+              </div>
+            </Panel>
+          </div>
+        </Section>
+
+        {/* Navigation */}
+        <Section>
+          <SectionHead eyebrow="navigation" title="Tabs, accordion & more" />
+          <div className="grid md:grid-cols-2 gap-6">
+            <Panel label="Tabs — pill">
               <Tabs
                 variant="pill"
                 tabs={[
@@ -618,81 +665,95 @@ function HomePage() {
                   },
                 ]}
               />
-            </GlassCard>
-            <GlassCard className="p-8">
-              <Label>Accordion</Label>
-              <Accordion title="Is it accessible?" icon={Check} defaultOpen>
+            </Panel>
+            <Panel label="Accordion">
+              <Accordion
+                title="Is it accessible?"
+                icon={ShieldCheck}
+                defaultOpen
+              >
                 ARIA roles, keyboard support, and focus management throughout.
               </Accordion>
               <Accordion title="Is it themeable?" icon={Palette}>
                 Every color is a CSS variable you can override.
               </Accordion>
-              <Accordion title="Is it typed?" icon={Code2}>
+              <Accordion title="Is it typed?" icon={Braces}>
                 Ships with complete TypeScript declarations.
               </Accordion>
-            </GlassCard>
+            </Panel>
           </div>
           <div className="mt-6 grid md:grid-cols-2 gap-6">
-            <GlassCard className="p-8">
-              <Label>Pagination</Label>
+            <Panel label="Pagination">
               <Pagination
                 currentPage={page}
                 totalPages={12}
                 onPageChange={setPage}
                 maxVisiblePages={5}
               />
-            </GlassCard>
-            <GlassCard className="p-8">
-              <Label>Carousel — drag, autoplay, keyboard</Label>
+            </Panel>
+            <Panel label="Carousel — drag, autoplay, keyboard">
               <Carousel
-                height="220px"
+                height="200px"
                 interval={4000}
                 slides={[
-                  <div className="h-full bg-gradient-to-br from-[#5227FF] to-[#B497CF] flex items-center justify-center text-white text-3xl font-bold">
+                  <div className="h-full bg-gradient-to-br from-[#5227FF] to-[#B497CF] grid place-items-center text-white text-2xl font-bold">
                     Slide 1
                   </div>,
-                  <div className="h-full bg-gradient-to-br from-[#FF9FFC] to-[#5227FF] flex items-center justify-center text-white text-3xl font-bold">
+                  <div className="h-full bg-gradient-to-br from-[#FF9FFC] to-[#5227FF] grid place-items-center text-white text-2xl font-bold">
                     Slide 2
                   </div>,
-                  <div className="h-full bg-gradient-to-br from-[#B497CF] to-[#FF9FFC] flex items-center justify-center text-white text-3xl font-bold">
+                  <div className="h-full bg-gradient-to-br from-[#B497CF] to-[#FF9FFC] grid place-items-center text-white text-2xl font-bold">
                     Slide 3
                   </div>,
                 ]}
               />
-            </GlassCard>
+            </Panel>
           </div>
         </Section>
 
-        {/* ---------- Closing CTA ---------- */}
-        <Section eyebrow="get started" title="Drop it into your next project">
-          <GlassCard className="p-10 text-center">
-            <p className="text-white/60 max-w-xl mx-auto mb-6">
+        {/* CTA band */}
+        <Section>
+          <Panel className="p-10 md:p-14 text-center border-white/12 bg-white/[0.04]">
+            <Eyebrow center>ship faster</Eyebrow>
+            <h2 className="mt-4 text-3xl md:text-4xl font-bold tracking-tight text-white">
+              Drop Morgu into your next project
+            </h2>
+            <p className="mt-3 text-white/55 max-w-xl mx-auto">
               Install the package, import the stylesheet, and ship a polished UI
               today.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <button
-                onClick={handleCopy}
-                className="flex items-center gap-3 rounded-2xl border border-white/15 bg-white/5 backdrop-blur-xl px-5 py-4 font-mono text-sm text-white/80 hover:bg-white/10 transition-colors"
-              >
-                <span className="text-[#FF9FFC]">$</span> npm i morgu
-                {copied ? (
-                  <Check className="size-4 text-[#FF9FFC]" />
-                ) : (
-                  <Copy className="size-4 opacity-60" />
-                )}
-              </button>
+            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+              <InstallPill copied={copied} onCopy={handleCopy} />
               <Link to="/docs">
                 <Button size="lg" variant="outline">
                   Read the docs
                 </Button>
               </Link>
             </div>
-          </GlassCard>
-          <p className="text-center text-white/30 font-mono text-xs mt-10">
-            morgu · MIT licensed · built by Mustapha Adegbite
-          </p>
+          </Panel>
         </Section>
+
+        {/* Footer */}
+        <footer className="border-t border-white/[0.07]">
+          <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <Mark />
+            <div className="flex items-center gap-6 font-mono text-sm text-white/50">
+              <Link
+                to="/components"
+                className="hover:text-white transition-colors"
+              >
+                Components
+              </Link>
+              <Link to="/docs" className="hover:text-white transition-colors">
+                Docs
+              </Link>
+              <span className="text-white/30">MIT</span>
+            </div>
+            <p className="font-mono text-xs text-white/30">
+              built by Mustapha Adegbite
+            </p>
+          </div>
+        </footer>
       </div>
 
       {/* ---------- Mounted overlays ---------- */}
@@ -733,7 +794,7 @@ function HomePage() {
           to close.
         </p>
       </Drawer>
-    </>
+    </div>
   );
 }
 
