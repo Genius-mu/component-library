@@ -1,96 +1,61 @@
-// components/Spinner.jsx
-import React from "react";
+// Spinner.jsx
 import { motion } from "framer-motion";
+import { cn } from "../utils/cn";
+
+const sizeClasses = {
+  xs: "size-4",
+  sm: "size-5",
+  md: "size-6",
+  lg: "size-8",
+  xl: "size-10",
+  "2xl": "size-12",
+};
 
 const Spinner = ({
   size = "md",
-  color = "var(--primary)", // Theme's primary accent
-  variant = "default", // default, subtle, gradient, dot
-  speed = 1.2, // Animation duration in seconds
+  variant = "ring", // "ring" | "dots"
+  speed = 1,
+  label = "Loading",
   className = "",
   ...props
 }) => {
-  const sizeClasses = {
-    xs: "w-4 h-4",
-    sm: "w-5 h-5",
-    md: "w-6 h-6",
-    lg: "w-8 h-8",
-    xl: "w-10 h-10",
-    "2xl": "w-12 h-12",
-  };
+  // Back-compat: old variant names map to the two clean variants.
+  const v = variant === "dot" || variant === "dots" ? "dots" : "ring";
 
-  const variants = {
-    default: "border-2 border-current border-t-transparent",
-    subtle: "border-2 border-[var(--muted)]/50 border-t-[var(--primary)]",
-    gradient:
-      "border-2 border-transparent bg-gradient-to-r from-[var(--primary)] to-[var(--primary)]/50",
-    dot: "flex gap-1.5 items-center", // Dot variant uses children divs
-  };
-
-  // Dot variant animation for bouncing dots
-  const dotAnimation = {
-    animate: {
-      scale: [1, 1.3, 1],
-      opacity: [0.5, 1, 0.5],
-    },
-    transition: {
-      duration: speed / 2,
-      repeat: Infinity,
-      repeatDelay: 0.1,
-      ease: "easeInOut",
-    },
-  };
+  if (v === "dots") {
+    return (
+      <div
+        role="status"
+        aria-label={label}
+        className={cn("inline-flex items-center gap-1.5", className)}
+        {...props}
+      >
+        {[0, 0.15, 0.3].map((delay, i) => (
+          <motion.span
+            key={i}
+            className="size-2 rounded-full bg-[var(--primary)]"
+            animate={{ scale: [1, 1.4, 1], opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: speed, repeat: Infinity, ease: "easeInOut", delay }}
+          />
+        ))}
+        <span className="sr-only">{label}</span>
+      </div>
+    );
+  }
 
   return (
-    <motion.div
-      animate={variant === "dot" ? {} : { rotate: 360, scale: [1, 1.05, 1] }} // Pulse for non-dot variants
-      transition={
-        variant === "dot"
-          ? {}
-          : {
-              rotate: { duration: speed, repeat: Infinity, ease: "linear" },
-              scale: {
-                duration: speed * 1.5,
-                repeat: Infinity,
-                ease: "easeInOut",
-              },
-            }
-      }
-      className={`
-        ${variant === "dot" ? "" : "rounded-full"}
-        ${sizeClasses[size] || sizeClasses.md}
-        ${variants[variant] || variants.default}
-        ${className}
-        will-change-transform
-      `}
-      style={{
-        color: color === "var(--primary)" ? undefined : color,
-      }}
-      aria-label="Loading"
-      aria-busy="true"
+    <motion.span
       role="status"
-      {...props}
-    >
-      {variant === "dot" && (
-        <>
-          <motion.div
-            className="w-1.5 h-1.5 rounded-full bg-[var(--primary)]"
-            {...dotAnimation}
-            transition={{ ...dotAnimation.transition, delay: 0 }}
-          />
-          <motion.div
-            className="w-1.5 h-1.5 rounded-full bg-[var(--primary)]"
-            {...dotAnimation}
-            transition={{ ...dotAnimation.transition, delay: 0.2 }}
-          />
-          <motion.div
-            className="w-1.5 h-1.5 rounded-full bg-[var(--primary)]"
-            {...dotAnimation}
-            transition={{ ...dotAnimation.transition, delay: 0.4 }}
-          />
-        </>
+      aria-label={label}
+      animate={{ rotate: 360 }}
+      transition={{ duration: speed, repeat: Infinity, ease: "linear" }}
+      className={cn(
+        "inline-block rounded-full border-2 border-[var(--muted)]/30 border-t-[var(--primary)]",
+        sizeClasses[size] || sizeClasses.md,
+        className
       )}
-    </motion.div>
+      {...props}
+    />
   );
 };
 
