@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
-  Code,
   ArrowRight,
   Mail,
   Lock,
@@ -12,9 +11,10 @@ import {
   User,
   Settings,
   LogOut,
-  Sparkles,
+  Code2,
   Palette,
   Zap,
+  ChevronDown,
 } from "lucide-react";
 
 import { cn } from "../utils/cn";
@@ -23,7 +23,6 @@ import { useToast } from "../context/ToastContext";
 import Navbar from "../components/Navbar";
 import ProgressBar from "../components/ProgressBar";
 import Button from "../components/Button";
-import Card from "../components/Card";
 import Input from "../components/Input";
 import Textarea from "../components/Textarea";
 import Select from "../components/Select";
@@ -46,45 +45,52 @@ import Skeleton from "../components/Skeleton";
 import Table from "../components/Table";
 import Avatar, { AvatarGroup } from "../components/Avatar";
 
-/* ---------- Layout helpers ---------- */
+/* ---------- Glass primitives (the page's signature) ---------- */
 
-const Section = ({ title, subtitle, children, eyebrow }) => (
+const GlassCard = ({ children, className = "" }) => (
+  <div
+    className={cn(
+      "relative rounded-3xl border border-white/10 bg-white/[0.035] backdrop-blur-2xl",
+      "shadow-[0_8px_40px_-12px_rgba(0,0,0,0.6)] p-6 overflow-hidden",
+      className,
+    )}
+  >
+    {/* top light-edge */}
+    <span className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+    {children}
+  </div>
+);
+
+const Eyebrow = ({ children }) => (
+  <p className="flex items-center justify-center gap-2 font-mono text-xs uppercase tracking-[0.25em] text-[#C8B6E2]">
+    <span className="size-1.5 rounded-full bg-[#5227FF]" />
+    {children}
+  </p>
+);
+
+const Section = ({ eyebrow, title, lead, children }) => (
   <motion.section
-    initial={{ opacity: 0, y: 30 }}
+    initial={{ opacity: 0, y: 28 }}
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true, margin: "-80px" }}
     transition={{ duration: 0.6, ease: "easeOut" }}
-    className="my-28 max-w-6xl mx-auto"
+    className="my-24 max-w-6xl mx-auto"
   >
-    {eyebrow && (
-      <p className="text-center text-sm font-semibold tracking-widest uppercase text-[var(--primary)] mb-3">
-        {eyebrow}
-      </p>
-    )}
-    <h2 className="text-3xl md:text-4xl font-bold text-center mb-3">{title}</h2>
-    {subtitle && (
-      <p className="text-center text-[var(--muted)] mb-12 max-w-2xl mx-auto">
-        {subtitle}
-      </p>
-    )}
+    <div className="text-center mb-10">
+      {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
+      <h2 className="mt-3 text-3xl md:text-4xl font-bold tracking-tight text-white">
+        {title}
+      </h2>
+      {lead && <p className="mt-3 text-white/55 max-w-2xl mx-auto">{lead}</p>}
+    </div>
     {children}
   </motion.section>
 );
 
-const DemoCard = ({ title, children, className = "" }) => (
-  <div
-    className={cn(
-      "rounded-2xl border border-[var(--border)] bg-[var(--surface)]/50 p-6",
-      className,
-    )}
-  >
-    {title && (
-      <h3 className="text-sm font-semibold mb-5 text-[var(--muted)] uppercase tracking-wide">
-        {title}
-      </h3>
-    )}
+const Label = ({ children }) => (
+  <p className="font-mono text-[0.7rem] uppercase tracking-widest text-white/40 mb-4">
     {children}
-  </div>
+  </p>
 );
 
 /* ---------- Page ---------- */
@@ -93,7 +99,6 @@ const FRAMEWORKS = [
   { label: "React", value: "react" },
   { label: "Vue", value: "vue" },
   { label: "Svelte", value: "svelte" },
-  { label: "Solid", value: "solid" },
 ];
 
 const USERS = [
@@ -118,8 +123,8 @@ function HomePage() {
   const [progress, setProgress] = useState(20);
 
   const { scrollYProgress } = useScroll();
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0]);
-  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.18], [1, 0]);
+  const heroY = useTransform(scrollYProgress, [0, 0.18], [0, -60]);
 
   useEffect(() => {
     const t = setInterval(
@@ -130,7 +135,7 @@ function HomePage() {
   }, []);
 
   const handleCopy = () => {
-    navigator.clipboard?.writeText("npm install morgu");
+    navigator.clipboard?.writeText("npm i morgu");
     setCopied(true);
     toast.success("Copied to clipboard");
     setTimeout(() => setCopied(false), 2000);
@@ -169,9 +174,7 @@ function HomePage() {
       <ProgressBar />
       <Navbar
         brand={
-          <span className="flex items-center gap-2">
-            <Sparkles className="size-5 text-[var(--primary)]" /> Morgu
-          </span>
+          <span className="font-mono tracking-tight text-white">morgu</span>
         }
         links={[
           { label: "Components", href: "/components" },
@@ -180,122 +183,154 @@ function HomePage() {
         linkComponent={Link}
       />
 
-      <motion.div
-        style={{ y: bgY }}
-        className="fixed inset-0 bg-gradient-to-b from-[var(--surface)] to-[var(--bg)] opacity-40 z-[-1] pointer-events-none"
-      />
-
-      <div className="min-h-screen pt-24 pb-32 px-6 md:px-12">
+      <div className="px-6 md:px-12">
         {/* ---------- Hero ---------- */}
-        <section className="relative min-h-[88vh] flex items-center justify-center text-center">
+        <section className="relative min-h-screen flex flex-col items-center justify-center text-center">
+          {/* legibility scrim so type holds over the moving ether */}
+          <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[60vh] rounded-full bg-black/40 blur-3xl" />
+
           <motion.div
-            style={{ opacity: heroOpacity }}
-            className="relative z-10 max-w-5xl"
+            style={{ opacity: heroOpacity, y: heroY }}
+            className="relative z-10 max-w-4xl"
           >
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="flex justify-center mb-6"
             >
-              <Badge variant="primary" dot>
-                v0.1.0 · MIT Licensed
-              </Badge>
+              <Eyebrow>react · tailwind v4 · framer motion</Eyebrow>
             </motion.div>
+
             <motion.h1
-              initial={{ opacity: 0, y: 60 }}
+              initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, ease: "easeOut" }}
-              className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight mb-6 leading-none"
+              transition={{ duration: 0.9, ease: "easeOut" }}
+              className="mt-6 text-7xl md:text-8xl lg:text-9xl font-extrabold tracking-tighter leading-[0.9] bg-gradient-to-br from-white via-white to-[#C8B6E2] bg-clip-text text-transparent"
             >
-              Build faster with{" "}
-              <span className="text-[var(--primary)]">Morgu</span>
+              Morgu
             </motion.h1>
+
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4, duration: 0.8 }}
-              className="text-xl md:text-2xl text-[var(--muted)] max-w-3xl mx-auto mb-10"
+              className="mt-6 text-lg md:text-xl text-white/70 max-w-2xl mx-auto"
             >
               A premium React component library — animated, themeable,
-              accessible, and fully typed. Built with Tailwind v4 and Framer
-              Motion.
+              accessible, and fully typed. Twenty-nine components that feel
+              alive.
             </motion.p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" icon={ArrowRight} iconPosition="right">
-                Get Started
-              </Button>
-              <Tooltip text={copied ? "Copied!" : "Copy to clipboard"}>
-                <Button
-                  variant="secondary"
-                  size="lg"
-                  icon={copied ? Check : Copy}
-                  onClick={handleCopy}
-                >
-                  npm install morgu
+
+            <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link to="/components">
+                <Button size="lg" icon={ArrowRight} iconPosition="right">
+                  Explore components
                 </Button>
+              </Link>
+              <Tooltip text={copied ? "Copied" : "Copy to clipboard"}>
+                <button
+                  onClick={handleCopy}
+                  className="group flex items-center gap-3 rounded-2xl border border-white/15 bg-white/5 backdrop-blur-xl px-5 py-4 font-mono text-sm text-white/80 hover:bg-white/10 transition-colors"
+                >
+                  <span className="text-[#FF9FFC]">$</span> npm i morgu
+                  {copied ? (
+                    <Check className="size-4 text-[#FF9FFC]" />
+                  ) : (
+                    <Copy className="size-4 opacity-60 group-hover:opacity-100" />
+                  )}
+                </button>
               </Tooltip>
             </div>
           </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.1 }}
+            className="absolute bottom-10 flex flex-col items-center gap-2 text-white/40"
+          >
+            <span className="font-mono text-[0.7rem] uppercase tracking-widest">
+              Scroll
+            </span>
+            <motion.span
+              animate={{ y: [0, 6, 0] }}
+              transition={{ duration: 1.6, repeat: Infinity }}
+            >
+              <ChevronDown className="size-4" />
+            </motion.span>
+          </motion.div>
         </section>
 
-        {/* ---------- Features ---------- */}
-        <Section
-          eyebrow="Why Morgu"
-          title="Everything you need, batteries included"
-        >
-          <div className="grid md:grid-cols-3 gap-8">
-            <Card title="Reusable Components" icon={Code}>
-              29 composable, accessible components from buttons to data tables.
-            </Card>
-            <Card title="Dark / Light Theming" icon={Palette}>
-              CSS-variable theming with a built-in toggle and persistent
-              preference.
-            </Card>
-            <Card title="Smooth Animations" icon={Zap}>
-              Framer Motion under the hood — springy, tasteful, and
-              reduced-motion aware.
-            </Card>
+        {/* ---------- Value props ---------- */}
+        <Section eyebrow="why morgu" title="Built to feel premium">
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              {
+                icon: Code2,
+                title: "29 components",
+                body: "From buttons to sortable tables — composable and accessible.",
+              },
+              {
+                icon: Palette,
+                title: "Themeable",
+                body: "Every color is a CSS variable. Dark and light, your palette.",
+              },
+              {
+                icon: Zap,
+                title: "Animated",
+                body: "Framer Motion springs, focus traps, reduced-motion aware.",
+              },
+            ].map((f) => (
+              <GlassCard key={f.title}>
+                <f.icon className="size-9 text-[#C8B6E2] mb-4" />
+                <h3 className="text-xl font-semibold text-white mb-1">
+                  {f.title}
+                </h3>
+                <p className="text-white/55 text-sm">{f.body}</p>
+              </GlassCard>
+            ))}
           </div>
         </Section>
 
         {/* ---------- Buttons ---------- */}
         <Section
-          eyebrow="Actions"
+          eyebrow="actions"
           title="Buttons"
-          subtitle="Six variants, three sizes, loading and icon states."
+          lead="Six variants, three sizes, loading and icon states."
         >
-          <div className="grid md:grid-cols-2 gap-6">
-            <DemoCard title="Variants">
-              <div className="flex flex-wrap gap-3">
-                <Button>Primary</Button>
-                <Button variant="secondary">Secondary</Button>
-                <Button variant="outline">Outline</Button>
-                <Button variant="ghost">Ghost</Button>
-                <Button variant="danger">Danger</Button>
-                <Button variant="success">Success</Button>
-              </div>
-            </DemoCard>
-            <DemoCard title="Sizes & states">
-              <div className="flex flex-wrap items-center gap-3">
-                <Button size="sm">Small</Button>
-                <Button size="md">Medium</Button>
-                <Button size="lg">Large</Button>
-                <Button loading>Saving</Button>
-                <Button disabled>Disabled</Button>
-              </div>
-            </DemoCard>
-          </div>
+          <GlassCard className="p-8">
+            <Label>Variants</Label>
+            <div className="flex flex-wrap gap-3 mb-8">
+              <Button>Primary</Button>
+              <Button variant="secondary">Secondary</Button>
+              <Button variant="outline">Outline</Button>
+              <Button variant="ghost">Ghost</Button>
+              <Button variant="danger">Danger</Button>
+              <Button variant="success">Success</Button>
+            </div>
+            <Label>Sizes &amp; states</Label>
+            <div className="flex flex-wrap items-center gap-3">
+              <Button size="sm">Small</Button>
+              <Button size="md">Medium</Button>
+              <Button size="lg">Large</Button>
+              <Button loading>Saving</Button>
+              <Button icon={ArrowRight} iconPosition="right">
+                Icon
+              </Button>
+              <Button disabled>Disabled</Button>
+            </div>
+          </GlassCard>
         </Section>
 
         {/* ---------- Form controls ---------- */}
         <Section
-          eyebrow="Inputs"
-          title="Form Components"
-          subtitle="Inputs, selects, toggles and sliders — all keyboard accessible."
+          eyebrow="inputs"
+          title="Form controls"
+          lead="Inputs, selects, toggles and sliders — all keyboard accessible."
         >
           <div className="grid md:grid-cols-2 gap-6">
-            <DemoCard title="Text fields">
+            <GlassCard className="p-8">
+              <Label>Text fields</Label>
               <div className="space-y-5">
                 <Input
                   label="Email"
@@ -320,8 +355,9 @@ function HomePage() {
                   onChange={(e) => setBio(e.target.value)}
                 />
               </div>
-            </DemoCard>
-            <DemoCard title="Choices">
+            </GlassCard>
+            <GlassCard className="p-8">
+              <Label>Choices</Label>
               <div className="space-y-6">
                 <Select
                   label="Framework"
@@ -358,14 +394,79 @@ function HomePage() {
                   formatValue={(v) => `${v}%`}
                 />
               </div>
-            </DemoCard>
+            </GlassCard>
+          </div>
+        </Section>
+
+        {/* ---------- Overlays ---------- */}
+        <Section eyebrow="overlays" title="Modals, drawers &amp; menus">
+          <div className="grid md:grid-cols-3 gap-6">
+            <GlassCard>
+              <Label>Modal</Label>
+              <Button onClick={() => setModalOpen(true)}>Open modal</Button>
+            </GlassCard>
+            <GlassCard>
+              <Label>Drawer</Label>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => setDrawer({ open: true, side: "right" })}
+                >
+                  Right
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => setDrawer({ open: true, side: "left" })}
+                >
+                  Left
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => setDrawer({ open: true, side: "bottom" })}
+                >
+                  Bottom
+                </Button>
+              </div>
+            </GlassCard>
+            <GlassCard>
+              <Label>Dropdown</Label>
+              <Dropdown
+                trigger={
+                  <span className="flex items-center gap-2">
+                    <User className="size-4" /> Account
+                  </span>
+                }
+                items={[
+                  {
+                    label: "Profile",
+                    icon: User,
+                    onClick: () => toast.info("Profile"),
+                  },
+                  {
+                    label: "Settings",
+                    icon: Settings,
+                    onClick: () => toast.info("Settings"),
+                  },
+                  {
+                    label: "Log out",
+                    icon: LogOut,
+                    danger: true,
+                    onClick: () => toast.error("Logged out"),
+                  },
+                ]}
+              />
+            </GlassCard>
           </div>
         </Section>
 
         {/* ---------- Feedback ---------- */}
-        <Section eyebrow="Feedback" title="Status & Notifications">
+        <Section eyebrow="feedback" title="Status &amp; notifications">
           <div className="grid md:grid-cols-2 gap-6">
-            <DemoCard title="Alerts">
+            <GlassCard className="p-8">
+              <Label>Alerts</Label>
               <div className="space-y-3">
                 <Alert variant="info" title="Heads up">
                   This is an informational message.
@@ -387,13 +488,11 @@ function HomePage() {
                 >
                   This action is irreversible.
                 </Alert>
-                <Alert variant="danger" title="Error">
-                  Something went wrong.
-                </Alert>
               </div>
-            </DemoCard>
+            </GlassCard>
             <div className="space-y-6">
-              <DemoCard title="Toasts (useToast hook)">
+              <GlassCard>
+                <Label>Toasts — useToast()</Label>
                 <div className="flex flex-wrap gap-3">
                   <Button
                     size="sm"
@@ -422,109 +521,44 @@ function HomePage() {
                     Error
                   </Button>
                 </div>
-              </DemoCard>
-              <DemoCard title="Badges & Spinners">
-                <div className="flex flex-wrap items-center gap-3 mb-5">
+              </GlassCard>
+              <GlassCard>
+                <Label>Badges, spinners &amp; progress</Label>
+                <div className="flex flex-wrap items-center gap-3 mb-4">
                   <Badge variant="primary">New</Badge>
                   <Badge variant="success" dot>
                     Live
                   </Badge>
-                  <Badge variant="danger">Error</Badge>
                   <Badge
                     variant="outline"
                     onRemove={() => toast.info("Removed")}
                   >
                     Removable
                   </Badge>
-                </div>
-                <div className="flex items-center gap-6">
                   <Spinner size="sm" />
-                  <Spinner size="md" />
-                  <Spinner size="lg" />
                   <Spinner variant="dots" />
                 </div>
-              </DemoCard>
-              <DemoCard title="Progress (live)">
                 <ProgressBar value={progress} max={100} showLabel height={8} />
-              </DemoCard>
+              </GlassCard>
             </div>
           </div>
         </Section>
 
-        {/* ---------- Overlays ---------- */}
-        <Section eyebrow="Overlays" title="Modals, Drawers & Menus">
-          <div className="grid md:grid-cols-3 gap-6">
-            <DemoCard title="Modal">
-              <Button onClick={() => setModalOpen(true)}>Open modal</Button>
-            </DemoCard>
-            <DemoCard title="Drawer">
-              <div className="flex flex-wrap gap-2">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => setDrawer({ open: true, side: "right" })}
-                >
-                  Right
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => setDrawer({ open: true, side: "left" })}
-                >
-                  Left
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => setDrawer({ open: true, side: "bottom" })}
-                >
-                  Bottom
-                </Button>
-              </div>
-            </DemoCard>
-            <DemoCard title="Dropdown">
-              <Dropdown
-                trigger={
-                  <span className="flex items-center gap-2">
-                    <User className="size-4" /> Account
-                  </span>
-                }
-                items={[
-                  {
-                    label: "Profile",
-                    icon: User,
-                    onClick: () => toast.info("Profile"),
-                  },
-                  {
-                    label: "Settings",
-                    icon: Settings,
-                    onClick: () => toast.info("Settings"),
-                  },
-                  {
-                    label: "Log out",
-                    icon: LogOut,
-                    danger: true,
-                    onClick: () => toast.error("Logged out"),
-                  },
-                ]}
-              />
-            </DemoCard>
-          </div>
-        </Section>
-
-        {/* ---------- Data display ---------- */}
-        <Section eyebrow="Data" title="Tables, Avatars & Skeletons">
+        {/* ---------- Data ---------- */}
+        <Section eyebrow="data" title="Tables, avatars &amp; skeletons">
           <div className="space-y-6">
-            <DemoCard title="Sortable table (click a row)">
+            <GlassCard className="p-8">
+              <Label>Sortable table — click a row</Label>
               <Table
                 columns={tableColumns}
                 data={USERS}
                 striped
                 onRowClick={(row) => toast.info(`Selected ${row.name}`)}
               />
-            </DemoCard>
+            </GlassCard>
             <div className="grid md:grid-cols-2 gap-6">
-              <DemoCard title="Avatars">
+              <GlassCard className="p-8">
+                <Label>Avatars</Label>
                 <div className="flex items-center gap-6">
                   <Avatar name="Ada Lovelace" status="online" />
                   <Avatar name="Alan Turing" size="lg" ring />
@@ -536,30 +570,32 @@ function HomePage() {
                     <Avatar name="I J" />
                   </AvatarGroup>
                 </div>
-              </DemoCard>
-              <DemoCard title="Skeleton loading">
+              </GlassCard>
+              <GlassCard className="p-8">
+                <Label>Skeleton loading</Label>
                 <div className="flex gap-4">
                   <Skeleton variant="circle" height="56px" width="56px" />
                   <div className="flex-1 space-y-2 pt-1">
                     <Skeleton variant="text" lines={3} />
                   </div>
                 </div>
-              </DemoCard>
+              </GlassCard>
             </div>
           </div>
         </Section>
 
         {/* ---------- Navigation ---------- */}
-        <Section eyebrow="Navigation" title="Tabs, Accordion & More">
+        <Section eyebrow="navigation" title="Tabs, accordion &amp; more">
           <div className="grid md:grid-cols-2 gap-6">
-            <DemoCard title="Tabs (pill)">
+            <GlassCard className="p-8">
+              <Label>Tabs — pill</Label>
               <Tabs
                 variant="pill"
                 tabs={[
                   {
                     label: "Overview",
                     content: (
-                      <p className="text-[var(--muted)]">
+                      <p className="text-white/60">
                         Springy pill tabs with a shared layout animation.
                       </p>
                     ),
@@ -567,7 +603,7 @@ function HomePage() {
                   {
                     label: "Features",
                     content: (
-                      <p className="text-[var(--muted)]">
+                      <p className="text-white/60">
                         The active indicator slides between tabs.
                       </p>
                     ),
@@ -575,55 +611,87 @@ function HomePage() {
                   {
                     label: "Pricing",
                     content: (
-                      <p className="text-[var(--muted)]">
-                        Keyboard arrows move between tabs too.
+                      <p className="text-white/60">
+                        Arrow keys move between tabs too.
                       </p>
                     ),
                   },
                 ]}
               />
-            </DemoCard>
-            <DemoCard title="Accordion">
+            </GlassCard>
+            <GlassCard className="p-8">
+              <Label>Accordion</Label>
               <Accordion title="Is it accessible?" icon={Check} defaultOpen>
-                Yes — ARIA roles, keyboard support, and focus management
-                throughout.
+                ARIA roles, keyboard support, and focus management throughout.
               </Accordion>
               <Accordion title="Is it themeable?" icon={Palette}>
-                Fully — every color is a CSS variable you can override.
+                Every color is a CSS variable you can override.
               </Accordion>
-              <Accordion title="Is it typed?" icon={Code}>
+              <Accordion title="Is it typed?" icon={Code2}>
                 Ships with complete TypeScript declarations.
               </Accordion>
-            </DemoCard>
+            </GlassCard>
           </div>
-
-          <div className="mt-6 space-y-6">
-            <DemoCard title="Pagination">
+          <div className="mt-6 grid md:grid-cols-2 gap-6">
+            <GlassCard className="p-8">
+              <Label>Pagination</Label>
               <Pagination
                 currentPage={page}
                 totalPages={12}
                 onPageChange={setPage}
-                maxVisiblePages={7}
+                maxVisiblePages={5}
               />
-            </DemoCard>
-            <DemoCard title="Carousel (drag, autoplay, keyboard)">
+            </GlassCard>
+            <GlassCard className="p-8">
+              <Label>Carousel — drag, autoplay, keyboard</Label>
               <Carousel
-                height="280px"
+                height="220px"
                 interval={4000}
                 slides={[
-                  <div className="h-full bg-gradient-to-br from-teal-900 to-blue-900 flex items-center justify-center text-white text-3xl font-bold">
+                  <div className="h-full bg-gradient-to-br from-[#5227FF] to-[#B497CF] flex items-center justify-center text-white text-3xl font-bold">
                     Slide 1
                   </div>,
-                  <div className="h-full bg-gradient-to-br from-purple-900 to-pink-900 flex items-center justify-center text-white text-3xl font-bold">
+                  <div className="h-full bg-gradient-to-br from-[#FF9FFC] to-[#5227FF] flex items-center justify-center text-white text-3xl font-bold">
                     Slide 2
                   </div>,
-                  <div className="h-full bg-gradient-to-br from-emerald-900 to-yellow-900 flex items-center justify-center text-white text-3xl font-bold">
+                  <div className="h-full bg-gradient-to-br from-[#B497CF] to-[#FF9FFC] flex items-center justify-center text-white text-3xl font-bold">
                     Slide 3
                   </div>,
                 ]}
               />
-            </DemoCard>
+            </GlassCard>
           </div>
+        </Section>
+
+        {/* ---------- Closing CTA ---------- */}
+        <Section eyebrow="get started" title="Drop it into your next project">
+          <GlassCard className="p-10 text-center">
+            <p className="text-white/60 max-w-xl mx-auto mb-6">
+              Install the package, import the stylesheet, and ship a polished UI
+              today.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <button
+                onClick={handleCopy}
+                className="flex items-center gap-3 rounded-2xl border border-white/15 bg-white/5 backdrop-blur-xl px-5 py-4 font-mono text-sm text-white/80 hover:bg-white/10 transition-colors"
+              >
+                <span className="text-[#FF9FFC]">$</span> npm i morgu
+                {copied ? (
+                  <Check className="size-4 text-[#FF9FFC]" />
+                ) : (
+                  <Copy className="size-4 opacity-60" />
+                )}
+              </button>
+              <Link to="/docs">
+                <Button size="lg" variant="outline">
+                  Read the docs
+                </Button>
+              </Link>
+            </div>
+          </GlassCard>
+          <p className="text-center text-white/30 font-mono text-xs mt-10">
+            morgu · MIT licensed · built by Mustapha Adegbite
+          </p>
         </Section>
       </div>
 
