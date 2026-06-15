@@ -672,4 +672,130 @@ function HomePage() {
                 icon={ShieldCheck}
                 defaultOpen
               >
-                ARIA roles, keyboard 
+                ARIA roles, keyboard support, and focus management throughout.
+              </Accordion>
+              <Accordion title="Is it themeable?" icon={Palette}>
+                Every color is a CSS variable you can override.
+              </Accordion>
+              <Accordion title="Is it typed?" icon={Braces}>
+                Ships with complete TypeScript declarations.
+              </Accordion>
+            </Panel>
+          </div>
+          <div className="mt-6 grid md:grid-cols-2 gap-6">
+            <Panel label="Pagination">
+              <Pagination
+                currentPage={page}
+                totalPages={12}
+                onPageChange={setPage}
+                maxVisiblePages={5}
+              />
+            </Panel>
+            <Panel label="Carousel — drag, autoplay, keyboard">
+              <Carousel
+                height="200px"
+                interval={4000}
+                slides={[
+                  <div className="h-full bg-gradient-to-br from-[#5227FF] to-[#B497CF] grid place-items-center text-white text-2xl font-bold">
+                    Slide 1
+                  </div>,
+                  <div className="h-full bg-gradient-to-br from-[#FF9FFC] to-[#5227FF] grid place-items-center text-white text-2xl font-bold">
+                    Slide 2
+                  </div>,
+                  <div className="h-full bg-gradient-to-br from-[#B497CF] to-[#FF9FFC] grid place-items-center text-white text-2xl font-bold">
+                    Slide 3
+                  </div>,
+                ]}
+              />
+            </Panel>
+          </div>
+        </Section>
+
+        {/* CTA band */}
+        <Section>
+          <Panel className="p-10 md:p-14 text-center border-white/12 bg-white/[0.04]">
+            <Eyebrow center>ship faster</Eyebrow>
+            <h2 className="mt-4 text-3xl md:text-4xl font-bold tracking-tight text-white">
+              Drop Morgu into your next project
+            </h2>
+            <p className="mt-3 text-white/55 max-w-xl mx-auto">
+              Install the package, import the stylesheet, and ship a polished UI
+              today.
+            </p>
+            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+              <InstallPill copied={copied} onCopy={handleCopy} />
+              <Link to="/docs">
+                <Button size="lg" variant="outline">
+                  Read the docs
+                </Button>
+              </Link>
+            </div>
+          </Panel>
+        </Section>
+
+        {/* Footer */}
+        <footer className="border-t border-white/[0.07]">
+          <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <Mark />
+            <div className="flex items-center gap-6 font-mono text-sm text-white/50">
+              <Link
+                to="/components"
+                className="hover:text-white transition-colors"
+              >
+                Components
+              </Link>
+              <Link to="/docs" className="hover:text-white transition-colors">
+                Docs
+              </Link>
+              <span className="text-white/30">MIT</span>
+            </div>
+            <p className="font-mono text-xs text-white/30">
+              built by Mustapha Adegbite
+            </p>
+          </div>
+        </footer>
+      </div>
+
+      {/* ---------- Mounted overlays ---------- */}
+      <Modal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title="Welcome to Morgu"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                setModalOpen(false);
+                toast.success("Nice!");
+              }}
+            >
+              Confirm
+            </Button>
+          </>
+        }
+      >
+        <p className="text-[var(--muted)]">
+          This modal traps focus, locks body scroll, animates in and out, and
+          closes on Escape or backdrop click.
+        </p>
+      </Modal>
+
+      <Drawer
+        isOpen={drawer.open}
+        side={drawer.side}
+        onClose={() => setDrawer((d) => ({ ...d, open: false }))}
+        title="Drawer panel"
+      >
+        <p className="text-[var(--muted)]">
+          Slides in from the {drawer.side}. Press Escape or click the backdrop
+          to close.
+        </p>
+      </Drawer>
+    </div>
+  );
+}
+
+export default HomePage;
