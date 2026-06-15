@@ -49,14 +49,6 @@ const Skeleton = ({
   );
 };
 
-// Add shimmer animation to CSS if not already present
-const style = document.createElement("style");
-style.textContent = `
-  @keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
-  }
-`;
-document.head.appendChild(style);
-
+// NOTE: the `shimmer` keyframes live in the shipped stylesheet (index.css),
+// so this component is safe to import in SSR environments (Next.js, Remix).
 export default Skeleton;
