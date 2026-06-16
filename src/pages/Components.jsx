@@ -44,6 +44,15 @@ import ProgressBar from "../components/ProgressBar";
 import ThemeToggle from "../components/ThemeToggle";
 import Avatar, { AvatarGroup } from "../components/Avatar";
 
+import Aurora from "../components/backgrounds/Aurora";
+import Silk from "../components/backgrounds/Silk";
+import FloatingLines from "../components/backgrounds/FloatingLines";
+import Prism from "../components/backgrounds/Prism";
+import DarkVeil from "../components/backgrounds/DarkVeil";
+import LightPillar from "../components/backgrounds/LightPillar";
+import Grid from "../components/backgrounds/Grid";
+import Particles from "../components/backgrounds/Particles";
+
 const ACCENT = {
   "--primary": "#5227FF",
   "--primary-hover": "#6743ff",
@@ -98,6 +107,12 @@ const Preview = ({ children, className = "" }) => (
     )}
   >
     {children}
+  </div>
+);
+
+const BgTile = ({ Comp, colors }) => (
+  <div className="relative h-60 rounded-2xl border border-white/10 overflow-hidden bg-[#06060a]">
+    <Comp colors={colors} fixed={false} zIndex={0} />
   </div>
 );
 
@@ -660,10 +675,80 @@ const GROUPS = GROUP_ORDER.map((group) => ({
   items: CATALOG.filter((c) => c.group === group),
 }));
 
+const DEFAULT_BG_COLORS = ["#5227FF", "#FF9FFC", "#B497CF"];
+
+const BACKGROUNDS = [
+  {
+    id: "aurora",
+    name: "Aurora",
+    Comp: Aurora,
+    description: "Drifting aurora curtains.",
+    code: `<Aurora />`,
+  },
+  {
+    id: "silk",
+    name: "Silk",
+    Comp: Silk,
+    description: "Soft flowing satin waves.",
+    code: `<Silk />`,
+  },
+  {
+    id: "floating-lines",
+    name: "FloatingLines",
+    Comp: FloatingLines,
+    description: "Constellation of connected nodes.",
+    code: `<FloatingLines count={70} maxDistance={150} />`,
+  },
+  {
+    id: "prism",
+    name: "Prism",
+    Comp: Prism,
+    description: "Rotating prismatic conic light.",
+    code: `<Prism blur={80} />`,
+  },
+  {
+    id: "dark-veil",
+    name: "DarkVeil",
+    Comp: DarkVeil,
+    description: "Subtle dark drifting fog.",
+    code: `<DarkVeil />`,
+  },
+  {
+    id: "light-pillar",
+    name: "LightPillar",
+    Comp: LightPillar,
+    description: "Swaying vertical light beams.",
+    code: `<LightPillar count={5} />`,
+  },
+  {
+    id: "grid",
+    name: "Grid",
+    Comp: Grid,
+    description: "Synthwave perspective grid.",
+    code: `<Grid spacing={60} />`,
+  },
+  {
+    id: "particles",
+    name: "Particles",
+    Comp: Particles,
+    description: "Floating glowing motes.",
+    code: `<Particles count={90} />`,
+  },
+];
+
+const SIDEBAR = [...GROUPS, { group: "Backgrounds", items: BACKGROUNDS }];
+
 /* ---------- Page ---------- */
 
 const Components = () => {
   const [active, setActive] = useState(CATALOG[0].id);
+  const [bgColors, setBgColors] = useState(DEFAULT_BG_COLORS);
+  const setColor = (i, val) =>
+    setBgColors((prev) => {
+      const next = [...prev];
+      next[i] = val;
+      return next;
+    });
 
   useEffect(() => {
     const obs = new IntersectionObserver(
@@ -673,6 +758,10 @@ const Components = () => {
     );
     CATALOG.forEach((c) => {
       const el = document.getElementById(c.id);
+      if (el) obs.observe(el);
+    });
+    BACKGROUNDS.forEach((b) => {
+      const el = document.getElementById(b.id);
       if (el) obs.observe(el);
     });
     return () => obs.disconnect();
@@ -711,7 +800,7 @@ const Components = () => {
       <div className="max-w-7xl mx-auto flex">
         {/* Sidebar */}
         <aside className="hidden md:block w-60 shrink-0 border-r border-white/10 py-10 pr-4 sticky top-[4.4rem] h-[calc(100vh-4.4rem)] overflow-y-auto">
-          {GROUPS.map((g) => (
+          {SIDEBAR.map((g) => (
             <div key={g.group} className="mb-7">
               <p className="font-mono text-[0.7rem] uppercase tracking-widest text-white/30 mb-3 pl-3">
                 {g.group}
@@ -774,6 +863,54 @@ const Components = () => {
               </div>
             </div>
           ))}
+
+          {/* Backgrounds */}
+          <div className="mt-20">
+            <div className="flex items-center gap-4 mb-6">
+              <h2 className="font-mono text-sm uppercase tracking-widest text-white/40">
+                Backgrounds
+              </h2>
+              <span className="flex-1 border-t border-white/10" />
+            </div>
+            <p className="text-white/55 mb-6 max-w-2xl">
+              Drop-in full-screen layers your pages stand on — dependency-free
+              and themeable. Tweak the palette and watch every preview update:
+            </p>
+            <div className="flex items-center gap-3 mb-12">
+              <span className="font-mono text-xs text-white/40">colors</span>
+              {bgColors.map((col, i) => (
+                <input
+                  key={i}
+                  type="color"
+                  value={col}
+                  onChange={(e) => setColor(i, e.target.value)}
+                  aria-label={`Color ${i + 1}`}
+                  className="size-9 rounded-lg cursor-pointer bg-transparent border border-white/15 p-0.5"
+                />
+              ))}
+              <button
+                onClick={() => setBgColors(DEFAULT_BG_COLORS)}
+                className="font-mono text-xs text-white/40 hover:text-white transition-colors ml-1"
+              >
+                reset
+              </button>
+            </div>
+
+            <div className="space-y-16">
+              {BACKGROUNDS.map((b) => (
+                <section key={b.id} id={b.id} className="scroll-mt-24">
+                  <h3 className="text-2xl font-bold tracking-tight">
+                    {b.name}
+                  </h3>
+                  <p className="text-white/55 mt-1 mb-5 max-w-2xl">
+                    {b.description}
+                  </p>
+                  <BgTile Comp={b.Comp} colors={bgColors} />
+                  <CodeBlock code={b.code} />
+                </section>
+              ))}
+            </div>
+          </div>
 
           <div className="mt-20 pt-8 border-t border-white/10 font-mono text-xs text-white/30">
             morgu · MIT licensed · built by Mustapha Adegbite
