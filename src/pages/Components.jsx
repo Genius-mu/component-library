@@ -1,17 +1,16 @@
 // Components.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowLeft,
-  ChevronRight,
+  Copy,
+  Check,
   Code,
   Info,
   User,
   Settings,
   LogOut,
   Mail,
-  Copy,
-  Check,
   Palette,
 } from "lucide-react";
 
@@ -45,9 +44,27 @@ import ProgressBar from "../components/ProgressBar";
 import ThemeToggle from "../components/ThemeToggle";
 import Avatar, { AvatarGroup } from "../components/Avatar";
 
-/* ---------- Shared UI ---------- */
+const ACCENT = {
+  "--primary": "#5227FF",
+  "--primary-hover": "#6743ff",
+  "--primary-active": "#3f1ae0",
+};
 
-const CodeBlock = ({ code }) => {
+/* ---------- Chrome primitives ---------- */
+
+const Mark = () => (
+  <span className="flex items-center gap-2.5">
+    <span className="grid place-items-center size-7 rounded-lg bg-[#5227FF] font-mono text-sm font-bold text-white">
+      M
+    </span>
+    <span className="font-mono font-semibold tracking-tight text-white">
+      morgu
+    </span>
+    <span className="font-mono text-xs text-white/35">/ components</span>
+  </span>
+);
+
+const CodeBlock = ({ code, lang = "tsx" }) => {
   const [copied, setCopied] = useState(false);
   const copy = () => {
     navigator.clipboard?.writeText(code);
@@ -55,15 +72,18 @@ const CodeBlock = ({ code }) => {
     setTimeout(() => setCopied(false), 1500);
   };
   return (
-    <div className="relative bg-[var(--surface)] rounded-xl border border-[var(--border)] mt-6">
-      <button
-        onClick={copy}
-        className="absolute top-3 right-3 text-[var(--muted)] hover:text-[var(--primary)] transition-colors"
-        aria-label="Copy code"
-      >
-        {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
-      </button>
-      <pre className="text-sm overflow-x-auto p-6">
+    <div className="rounded-xl border border-white/10 bg-black/50 overflow-hidden mt-4">
+      <div className="flex items-center justify-between px-4 py-2 border-b border-white/10">
+        <span className="font-mono text-xs text-white/40">{lang}</span>
+        <button
+          onClick={copy}
+          className="text-white/40 hover:text-white transition-colors"
+          aria-label="Copy code"
+        >
+          {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
+        </button>
+      </div>
+      <pre className="p-4 overflow-x-auto text-sm leading-relaxed font-mono text-white/85">
         <code>{code}</code>
       </pre>
     </div>
@@ -73,7 +93,7 @@ const CodeBlock = ({ code }) => {
 const Preview = ({ children, className = "" }) => (
   <div
     className={cn(
-      "flex flex-wrap items-center gap-4 p-8 rounded-xl border border-dashed border-[var(--border)] bg-[var(--surface)]/40",
+      "flex flex-wrap items-center gap-4 p-8 rounded-2xl border border-white/10 bg-white/[0.02]",
       className,
     )}
   >
@@ -94,7 +114,7 @@ const ModalDemo = () => {
         title="Example modal"
         footer={<Button onClick={() => setOpen(false)}>Done</Button>}
       >
-        <p className="text-[var(--muted)]">
+        <p className="text-white/60">
           Focus-trapped, scroll-locked, and animated in and out.
         </p>
       </Modal>
@@ -121,7 +141,7 @@ const DrawerDemo = () => {
         onClose={() => setSide(null)}
         title="Drawer"
       >
-        <p className="text-[var(--muted)]">Slides in from the {side}.</p>
+        <p className="text-white/60">Slides in from the {side}.</p>
       </Drawer>
     </>
   );
@@ -208,11 +228,12 @@ const FormControlsDemo = () => {
   );
 };
 
-/* ---------- Catalog data ---------- */
+/* ---------- Catalog data (grouped) ---------- */
 
 const CATALOG = [
   {
     id: "button",
+    group: "Inputs & controls",
     name: "Button",
     description: "Six variants, three sizes, loading and icon states.",
     demo: (
@@ -232,31 +253,10 @@ const CATALOG = [
 <Button variant="danger" loading>Saving</Button>
 <Button icon={Code} iconPosition="right">With icon</Button>`,
   },
-  {
-    id: "card",
-    name: "Card",
-    description:
-      "Elevated container with hover lift, icon, subtitle and footer.",
-    demo: (
-      <div className="grid sm:grid-cols-2 gap-6 w-full">
-        <Card title="Reusable" subtitle="Atoms & molecules" icon={Code}>
-          Composable building blocks.
-        </Card>
-        <Card
-          title="Themeable"
-          icon={Palette}
-          footer={<Button size="sm">Action</Button>}
-        >
-          Driven by CSS variables.
-        </Card>
-      </div>
-    ),
-    code: `<Card title="Reusable" subtitle="Atoms" icon={Code} footer={<Button>Go</Button>}>
-  Composable building blocks.
-</Card>`,
-  },
+
   {
     id: "form",
+    group: "Inputs & controls",
     name: "Form controls",
     description:
       "Input, Textarea, Select, Checkbox, Radio, Switch and Slider — all keyboard accessible.",
@@ -268,8 +268,10 @@ const CATALOG = [
 <RadioGroup value={p} onChange={setP}><Radio value="pro" label="Pro" /></RadioGroup>
 <Slider value={vol} onChange={setVol} formatValue={(v) => v + "%"} />`,
   },
+
   {
     id: "modal",
+    group: "Overlays",
     name: "Modal",
     description:
       "Focus-trapped dialog with scroll lock, footer slot and exit animation.",
@@ -278,8 +280,10 @@ const CATALOG = [
   Modal content
 </Modal>`,
   },
+
   {
     id: "drawer",
+    group: "Overlays",
     name: "Drawer",
     description: "Slide-in panel from any edge.",
     demo: <DrawerDemo />,
@@ -287,8 +291,10 @@ const CATALOG = [
   Panel content
 </Drawer>`,
   },
+
   {
     id: "tooltip",
+    group: "Overlays",
     name: "Tooltip",
     description: "Hover/focus tooltip with positioning and delay.",
     demo: (
@@ -308,8 +314,10 @@ const CATALOG = [
   <Button>Hover me</Button>
 </Tooltip>`,
   },
+
   {
     id: "dropdown",
+    group: "Overlays",
     name: "Dropdown",
     description: "Keyboard-navigable menu with item icons and alignment.",
     demo: (
@@ -331,8 +339,35 @@ const CATALOG = [
   { label: "Log out", icon: LogOut, danger: true },
 ]} />`,
   },
+
+  {
+    id: "card",
+    group: "Layout & navigation",
+    name: "Card",
+    description:
+      "Elevated container with hover lift, icon, subtitle and footer.",
+    demo: (
+      <div className="grid sm:grid-cols-2 gap-6 w-full">
+        <Card title="Reusable" subtitle="Atoms & molecules" icon={Code}>
+          Composable building blocks.
+        </Card>
+        <Card
+          title="Themeable"
+          icon={Palette}
+          footer={<Button size="sm">Action</Button>}
+        >
+          Driven by CSS variables.
+        </Card>
+      </div>
+    ),
+    code: `<Card title="Reusable" subtitle="Atoms" icon={Code} footer={<Button>Go</Button>}>
+  Composable building blocks.
+</Card>`,
+  },
+
   {
     id: "tabs",
+    group: "Layout & navigation",
     name: "Tabs",
     description: "Line and pill variants with a shared layout animation.",
     demo: (
@@ -342,15 +377,15 @@ const CATALOG = [
           tabs={[
             {
               label: "One",
-              content: <p className="text-[var(--muted)]">First panel</p>,
+              content: <p className="text-white/60">First panel</p>,
             },
             {
               label: "Two",
-              content: <p className="text-[var(--muted)]">Second panel</p>,
+              content: <p className="text-white/60">Second panel</p>,
             },
             {
               label: "Three",
-              content: <p className="text-[var(--muted)]">Third panel</p>,
+              content: <p className="text-white/60">Third panel</p>,
             },
           ]}
         />
@@ -361,8 +396,10 @@ const CATALOG = [
   { label: "Two", content: <p>Second</p> },
 ]} />`,
   },
+
   {
     id: "accordion",
+    group: "Layout & navigation",
     name: "Accordion",
     description: "Collapsible sections with ARIA wiring and optional icons.",
     demo: (
@@ -379,8 +416,10 @@ const CATALOG = [
   Answer content
 </Accordion>`,
   },
+
   {
     id: "carousel",
+    group: "Layout & navigation",
     name: "Carousel",
     description: "Drag/swipe, autoplay, pause-on-hover and keyboard arrows.",
     demo: (
@@ -388,10 +427,10 @@ const CATALOG = [
         <Carousel
           height="220px"
           slides={[
-            <div className="h-full bg-gradient-to-br from-teal-900 to-blue-900 flex items-center justify-center text-white text-2xl font-bold">
+            <div className="h-full bg-gradient-to-br from-[#5227FF] to-[#B497CF] flex items-center justify-center text-white text-2xl font-bold">
               Slide 1
             </div>,
-            <div className="h-full bg-gradient-to-br from-purple-900 to-pink-900 flex items-center justify-center text-white text-2xl font-bold">
+            <div className="h-full bg-gradient-to-br from-[#FF9FFC] to-[#5227FF] flex items-center justify-center text-white text-2xl font-bold">
               Slide 2
             </div>,
           ]}
@@ -400,8 +439,10 @@ const CATALOG = [
     ),
     code: `<Carousel slides={[<div>Slide 1</div>, <div>Slide 2</div>]} autoPlay />`,
   },
+
   {
     id: "table",
+    group: "Layout & navigation",
     name: "Table",
     description:
       "Sortable, optionally striped, with custom cell renderers and row clicks.",
@@ -435,8 +476,39 @@ const CATALOG = [
   { key: "tag", header: "Status", render: (v) => <Badge dot>{v}</Badge> },
 ]} data={rows} onRowClick={(r) => ...} />`,
   },
+
+  {
+    id: "breadcrumb",
+    group: "Layout & navigation",
+    name: "Breadcrumb",
+    description: "Router-agnostic trail with optional collapsing.",
+    demo: (
+      <Breadcrumb
+        items={[
+          { label: "Home", href: "/" },
+          { label: "Components", href: "/components" },
+          { label: "Breadcrumb" },
+        ]}
+      />
+    ),
+    code: `<Breadcrumb items={[
+  { label: "Home", href: "/" },
+  { label: "Breadcrumb" },
+]} />`,
+  },
+
+  {
+    id: "pagination",
+    group: "Layout & navigation",
+    name: "Pagination",
+    description: "Page navigation with first/last and a visible-page window.",
+    demo: <PaginationDemo />,
+    code: `<Pagination currentPage={page} totalPages={10} onPageChange={setPage} />`,
+  },
+
   {
     id: "avatar",
+    group: "Feedback & display",
     name: "Avatar",
     description:
       "Image with initials fallback, status dot, ring, and grouping.",
@@ -457,8 +529,10 @@ const CATALOG = [
   <Avatar name="A B" /><Avatar name="C D" /><Avatar name="E F" />
 </AvatarGroup>`,
   },
+
   {
     id: "alert",
+    group: "Feedback & display",
     name: "Alert",
     description: "Four intents, optional title, action slot and dismiss.",
     demo: (
@@ -476,8 +550,10 @@ const CATALOG = [
     ),
     code: `<Alert variant="success" dismissible onDismiss={fn}>Saved!</Alert>`,
   },
+
   {
     id: "badge",
+    group: "Feedback & display",
     name: "Badge",
     description:
       "Status pills with variants, dot indicator and removable option.",
@@ -496,8 +572,10 @@ const CATALOG = [
     code: `<Badge variant="success" dot>Live</Badge>
 <Badge variant="outline" onRemove={fn}>Removable</Badge>`,
   },
+
   {
     id: "spinner",
+    group: "Feedback & display",
     name: "Spinner",
     description: "Ring and dots variants in six sizes.",
     demo: (
@@ -511,8 +589,10 @@ const CATALOG = [
     code: `<Spinner size="lg" />
 <Spinner variant="dots" />`,
   },
+
   {
     id: "toast",
+    group: "Feedback & display",
     name: "Toast",
     description: "App-wide notifications via the useToast() hook.",
     demo: <ToastDemo />,
@@ -520,15 +600,10 @@ const CATALOG = [
 toast.success("Saved!");
 toast.error("Something failed");`,
   },
-  {
-    id: "pagination",
-    name: "Pagination",
-    description: "Page navigation with first/last and a visible-page window.",
-    demo: <PaginationDemo />,
-    code: `<Pagination currentPage={page} totalPages={10} onPageChange={setPage} />`,
-  },
+
   {
     id: "progress",
+    group: "Feedback & display",
     name: "Progress bar",
     description:
       "Determinate bar with a label, or a scroll-linked top bar when value is omitted.",
@@ -540,8 +615,10 @@ toast.error("Something failed");`,
     code: `<ProgressBar value={66} showLabel />   // determinate
 <ProgressBar />                          // scroll-linked top bar`,
   },
+
   {
     id: "skeleton",
+    group: "Feedback & display",
     name: "Skeleton",
     description: "Shimmering placeholders for loading states.",
     demo: (
@@ -555,26 +632,10 @@ toast.error("Something failed");`,
     code: `<Skeleton variant="circle" height="56px" width="56px" />
 <Skeleton variant="text" lines={3} />`,
   },
-  {
-    id: "breadcrumb",
-    name: "Breadcrumb",
-    description: "Router-agnostic trail with optional collapsing.",
-    demo: (
-      <Breadcrumb
-        items={[
-          { label: "Home", href: "/" },
-          { label: "Components", href: "/components" },
-          { label: "Breadcrumb" },
-        ]}
-      />
-    ),
-    code: `<Breadcrumb items={[
-  { label: "Home", href: "/" },
-  { label: "Breadcrumb" },
-]} />`,
-  },
+
   {
     id: "theme-toggle",
+    group: "Feedback & display",
     name: "Theme toggle",
     description: "Icon-only light/dark switch backed by ThemeProvider.",
     demo: (
@@ -588,67 +649,135 @@ toast.error("Something failed");`,
   },
 ];
 
+const GROUP_ORDER = [
+  "Inputs & controls",
+  "Overlays",
+  "Layout & navigation",
+  "Feedback & display",
+];
+const GROUPS = GROUP_ORDER.map((group) => ({
+  group,
+  items: CATALOG.filter((c) => c.group === group),
+}));
+
 /* ---------- Page ---------- */
 
 const Components = () => {
-  const scrollTo = (id) => {
+  const [active, setActive] = useState(CATALOG[0].id);
+
+  useEffect(() => {
+    const obs = new IntersectionObserver(
+      (entries) =>
+        entries.forEach((e) => e.isIntersecting && setActive(e.target.id)),
+      { rootMargin: "-12% 0px -78% 0px", threshold: 0 },
+    );
+    CATALOG.forEach((c) => {
+      const el = document.getElementById(c.id);
+      if (el) obs.observe(el);
+    });
+    return () => obs.disconnect();
+  }, []);
+
+  const go = (id) =>
     document
       .getElementById(id)
       ?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
 
   return (
-    <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
-      <header className="sticky top-0 z-40 bg-[var(--surface)]/80 backdrop-blur-md border-b border-[var(--border)]">
+    <div
+      style={ACCENT}
+      className="relative min-h-screen bg-[#070709]/92 backdrop-blur-2xl text-white"
+    >
+      <header className="sticky top-0 z-40 bg-[#070709]/80 backdrop-blur-xl border-b border-white/10">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-bold">Morgu Components</h1>
-          <div className="flex items-center gap-4">
-            <ThemeToggle size="sm" />
+          <Mark />
+          <div className="flex items-center gap-6 font-mono text-sm">
+            <Link
+              to="/docs"
+              className="text-white/55 hover:text-white transition-colors"
+            >
+              Docs
+            </Link>
             <Link
               to="/"
-              className="flex items-center gap-2 text-[var(--muted)] hover:text-[var(--primary)] transition-colors"
+              className="flex items-center gap-2 text-white/55 hover:text-white transition-colors"
             >
-              <ArrowLeft className="size-5" /> Home
+              <ArrowLeft className="size-4" /> Home
             </Link>
           </div>
         </div>
       </header>
 
-      <div className="flex max-w-7xl mx-auto">
-        <aside className="hidden md:block w-60 border-r border-[var(--border)] p-6 sticky top-[4.5rem] h-[calc(100vh-4.5rem)] overflow-y-auto">
-          <nav className="space-y-1">
-            {CATALOG.map((c) => (
-              <button
-                key={c.id}
-                onClick={() => scrollTo(c.id)}
-                className="w-full flex items-center justify-between py-2 px-3 rounded-lg hover:bg-[var(--surface-hover)] transition-colors text-[var(--muted)] hover:text-[var(--primary)] text-sm"
-              >
-                {c.name}
-                <ChevronRight className="size-4 opacity-50" />
-              </button>
-            ))}
-          </nav>
+      <div className="max-w-7xl mx-auto flex">
+        {/* Sidebar */}
+        <aside className="hidden md:block w-60 shrink-0 border-r border-white/10 py-10 pr-4 sticky top-[4.4rem] h-[calc(100vh-4.4rem)] overflow-y-auto">
+          {GROUPS.map((g) => (
+            <div key={g.group} className="mb-7">
+              <p className="font-mono text-[0.7rem] uppercase tracking-widest text-white/30 mb-3 pl-3">
+                {g.group}
+              </p>
+              <nav className="space-y-0.5">
+                {g.items.map((c) => (
+                  <button
+                    key={c.id}
+                    onClick={() => go(c.id)}
+                    className={cn(
+                      "w-full text-left text-sm py-1.5 pl-3 border-l-2 transition-colors",
+                      active === c.id
+                        ? "border-[#5227FF] text-white font-medium"
+                        : "border-transparent text-white/50 hover:text-white/80",
+                    )}
+                  >
+                    {c.name}
+                  </button>
+                ))}
+              </nav>
+            </div>
+          ))}
         </aside>
 
-        <main className="flex-1 p-6 md:p-12 lg:p-16 min-w-0">
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
-            Components
+        {/* Main */}
+        <main className="flex-1 min-w-0 px-6 md:px-12 py-12">
+          <p className="font-mono text-xs uppercase tracking-[0.25em] text-white/35">
+            components
+          </p>
+          <h1 className="mt-3 text-4xl md:text-5xl font-bold tracking-tight">
+            Component gallery
           </h1>
-          <p className="text-lg text-[var(--muted)] mb-16 max-w-2xl">
-            Every component with a live preview and a copy-paste snippet.{" "}
-            {CATALOG.length} sections below.
+          <p className="mt-4 text-lg text-white/55 max-w-2xl">
+            Every component with a live preview and a copy-paste snippet —{" "}
+            {CATALOG.length} in total.
           </p>
 
-          {CATALOG.map((c) => (
-            <section key={c.id} id={c.id} className="mb-20 scroll-mt-24">
-              <h2 className="text-3xl font-bold mb-2">{c.name}</h2>
-              <p className="text-[var(--muted)] mb-6 max-w-2xl">
-                {c.description}
-              </p>
-              <Preview>{c.demo}</Preview>
-              <CodeBlock code={c.code} />
-            </section>
+          {GROUPS.map((g) => (
+            <div key={g.group} className="mt-20 first:mt-16">
+              <div className="flex items-center gap-4 mb-10">
+                <h2 className="font-mono text-sm uppercase tracking-widest text-white/40">
+                  {g.group}
+                </h2>
+                <span className="flex-1 border-t border-white/10" />
+              </div>
+
+              <div className="space-y-16">
+                {g.items.map((c) => (
+                  <section key={c.id} id={c.id} className="scroll-mt-24">
+                    <h3 className="text-2xl font-bold tracking-tight">
+                      {c.name}
+                    </h3>
+                    <p className="text-white/55 mt-1 mb-5 max-w-2xl">
+                      {c.description}
+                    </p>
+                    <Preview>{c.demo}</Preview>
+                    <CodeBlock code={c.code} />
+                  </section>
+                ))}
+              </div>
+            </div>
           ))}
+
+          <div className="mt-20 pt-8 border-t border-white/10 font-mono text-xs text-white/30">
+            morgu · MIT licensed · built by Mustapha Adegbite
+          </div>
         </main>
       </div>
     </div>
