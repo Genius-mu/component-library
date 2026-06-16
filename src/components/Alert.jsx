@@ -1,4 +1,5 @@
 // Alert.jsx
+import { memo } from "react";
 import { motion } from "framer-motion";
 import { Info, CheckCircle, AlertCircle, XCircle, X } from "lucide-react";
 import { cn } from "../utils/cn";
@@ -73,4 +74,4 @@ const Alert = ({
   );
 };
 
-export default Alert;
+export default memo(Alert);

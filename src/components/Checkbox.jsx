@@ -37,13 +37,14 @@ const Checkbox = ({
         className
       )}
     >
-      <button
+      <motion.button
         id={cbId}
         type="button"
         role="checkbox"
         aria-checked={indeterminate ? "mixed" : checked}
         disabled={disabled}
         onClick={toggle}
+        whileTap={disabled ? undefined : { scale: 0.85 }}
         className={cn(
           "flex items-center justify-center rounded-md border transition-colors mt-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]",
           s.box,
@@ -64,7 +65,7 @@ const Checkbox = ({
             <Check className={cn(s.icon, "text-white")} strokeWidth={3} />
           )}
         </motion.span>
-      </button>
+      </motion.button>
       {(label || description) && (
         <span className="flex flex-col">
           {label && <span className="text-sm text-[var(--text)]">{label}</span>}

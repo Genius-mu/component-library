@@ -1,10 +1,11 @@
 // Tabs.jsx
-import { useState } from "react";
+import { useState, useId } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "../utils/cn";
 
 const Tabs = ({ tabs = [], defaultTab = 0, variant = "line", className = "" }) => {
   const [active, setActive] = useState(defaultTab);
+  const uid = useId();
 
   const onKeyDown = (e) => {
     if (e.key === "ArrowRight") setActive((a) => Math.min(a + 1, tabs.length - 1));
@@ -42,7 +43,7 @@ const Tabs = ({ tabs = [], defaultTab = 0, variant = "line", className = "" }) =
             >
               {variant === "pill" && selected && (
                 <motion.span
-                  layoutId="tab-pill"
+                  layoutId={`${uid}-pill`}
                   className="absolute inset-0 rounded-lg bg-[var(--primary)] -z-10"
                   transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 />
@@ -50,7 +51,7 @@ const Tabs = ({ tabs = [], defaultTab = 0, variant = "line", className = "" }) =
               {tab.label}
               {variant === "line" && selected && (
                 <motion.span
-                  layoutId="tab-underline"
+                  layoutId={`${uid}-underline`}
                   className="absolute -bottom-px left-0 right-0 h-0.5 bg-[var(--primary)]"
                   transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 />

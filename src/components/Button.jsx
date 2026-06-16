@@ -6,14 +6,14 @@ import { cn } from "../utils/cn";
 
 const variants = {
   primary:
-    "bg-[var(--primary)] hover:bg-[var(--primary-hover)] active:bg-[var(--primary-active)] text-white",
+    "bg-[var(--primary)] hover:bg-[var(--primary-hover)] active:bg-[var(--primary-active)] text-white shadow-lg shadow-[var(--primary)]/25",
   secondary:
     "bg-[var(--surface)] hover:bg-[var(--surface-hover)] border border-[var(--border)] text-[var(--text)]",
   outline:
     "bg-transparent hover:bg-[var(--surface)] border border-[var(--border)] text-[var(--text)]",
   ghost: "bg-transparent hover:bg-[var(--surface-hover)] text-[var(--text)]",
-  danger: "bg-red-500 hover:bg-red-600 active:bg-red-700 text-white",
-  success: "bg-green-500 hover:bg-green-600 active:bg-green-700 text-white",
+  danger: "bg-red-500 hover:bg-red-600 active:bg-red-700 text-white shadow-lg shadow-red-500/25",
+  success: "bg-green-500 hover:bg-green-600 active:bg-green-700 text-white shadow-lg shadow-green-500/25",
 };
 
 const sizes = {
@@ -42,8 +42,8 @@ const Button = forwardRef(
     return (
       <motion.button
         ref={ref}
-        whileHover={isDisabled ? undefined : { scale: 1.04 }}
-        whileTap={isDisabled ? undefined : { scale: 0.97 }}
+        whileHover={isDisabled ? undefined : { scale: 1.02, y: -1 }}
+        whileTap={isDisabled ? undefined : { scale: 0.97, y: 0 }}
         transition={{ type: "spring", stiffness: 300, damping: 20 }}
         disabled={isDisabled}
         aria-busy={loading}

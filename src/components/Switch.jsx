@@ -26,13 +26,14 @@ const Switch = ({
   };
 
   const toggle = (
-    <button
+    <motion.button
       type="button"
       role="switch"
       aria-checked={checked}
       disabled={disabled}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
+      whileTap={disabled ? undefined : { scale: 0.95 }}
       className={cn(
         "relative inline-flex items-center rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]",
         disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
@@ -51,7 +52,7 @@ const Switch = ({
         transition={{ type: "spring", stiffness: 500, damping: 30 }}
         style={{ width: s.knob, height: s.knob }}
       />
-    </button>
+    </motion.button>
   );
 
   if (!label) return <div className={className}>{toggle}</div>;

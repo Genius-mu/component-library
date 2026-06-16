@@ -1,5 +1,5 @@
 // Avatar.jsx
-import { useState, Children } from "react";
+import { useState, Children, memo } from "react";
 import { motion } from "framer-motion";
 import { cn } from "../utils/cn";
 
@@ -99,4 +99,4 @@ export const AvatarGroup = ({ children, max, size = "md", className = "" }) => {
   );
 };
 
-export default Avatar;
+export default memo(Avatar);

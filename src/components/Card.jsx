@@ -27,7 +27,8 @@ const Card = forwardRef(
       whileHover={hoverable ? { y: -6, scale: 1.02 } : undefined}
       className={cn(
         "rounded-2xl bg-[var(--surface)] border border-[var(--border)] overflow-hidden",
-        hoverable && "transition-shadow hover:shadow-2xl hover:shadow-black/20",
+        hoverable &&
+          "transition-[box-shadow,border-color] hover:border-[var(--primary)]/40 hover:shadow-2xl hover:shadow-[var(--primary)]/10",
         className
       )}
       {...props}

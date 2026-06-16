@@ -52,7 +52,7 @@ const Carousel = ({
   useEffect(() => {
     if (!autoPlay || slides.length <= 1) return;
     const timer = setInterval(() => {
-      if (!paused.current) {
+      if (!paused.current && !document.hidden) {
         setDirection(1);
         setCurrent((p) => (p + 1) % slides.length);
       }

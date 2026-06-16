@@ -80,19 +80,21 @@ const Slider = ({
         aria-valuemax={max}
         aria-valuenow={value}
         aria-label={label || "Slider"}
+        style={{ touchAction: "none" }}
         className={cn(
           "relative h-2 rounded-full bg-[var(--border)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]",
           disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
         )}
       >
         <div
-          className="absolute top-0 left-0 h-full rounded-full bg-[var(--primary)]"
+          className="absolute top-0 left-0 h-full rounded-full bg-[var(--primary)] transition-[width] duration-75"
           style={{ width: `${pct}%` }}
         />
         <motion.div
           className="absolute top-1/2 size-4 -translate-y-1/2 -translate-x-1/2 rounded-full bg-white shadow-md border border-[var(--border)]"
           style={{ left: `${pct}%` }}
-          whileTap={{ scale: 1.2 }}
+          whileHover={{ scale: 1.15 }}
+          whileTap={{ scale: 1.25 }}
         />
       </div>
     </div>

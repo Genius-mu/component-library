@@ -1,4 +1,5 @@
 // Badge.jsx
+import { memo } from "react";
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import { cn } from "../utils/cn";
@@ -67,4 +68,4 @@ const Badge = ({
   </motion.span>
 );
 
-export default Badge;
+export default memo(Badge);

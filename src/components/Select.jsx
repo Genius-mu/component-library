@@ -88,10 +88,11 @@ const Select = ({
             <motion.ul
               id={listId}
               role="listbox"
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
+              initial={{ opacity: 0, y: -8, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -8, scale: 0.98 }}
               transition={{ duration: 0.15 }}
+              style={{ transformOrigin: "top" }}
               className="absolute z-50 mt-2 w-full max-h-60 overflow-auto rounded-xl bg-[var(--surface)] border border-[var(--border)] shadow-xl p-1"
             >
               {normalized.map((o, i) => {
@@ -100,6 +101,7 @@ const Select = ({
                 return (
                   <li
                     key={String(o.value)}
+                    ref={hl ? (el) => el?.scrollIntoView({ block: "nearest" }) : undefined}
                     role="option"
                     aria-selected={active}
                     onMouseEnter={() => setHighlight(i)}

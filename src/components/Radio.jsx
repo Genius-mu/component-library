@@ -53,12 +53,13 @@ export const Radio = ({
         className
       )}
     >
-      <button
+      <motion.button
         type="button"
         role="radio"
         aria-checked={checked}
         disabled={disabled}
         onClick={select}
+        whileTap={disabled ? undefined : { scale: 0.85 }}
         className={cn(
           "flex items-center justify-center rounded-full border transition-colors mt-0.5 bg-[var(--surface)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]",
           s.box,
@@ -71,7 +72,7 @@ export const Radio = ({
           transition={{ type: "spring", stiffness: 500, damping: 30 }}
           className={cn("rounded-full bg-[var(--primary)]", s.dot)}
         />
-      </button>
+      </motion.button>
       {(label || description) && (
         <span className="flex flex-col">
           {label && <span className="text-sm text-[var(--text)]">{label}</span>}

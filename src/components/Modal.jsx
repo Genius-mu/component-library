@@ -29,6 +29,7 @@ const Modal = ({
   useEffect(() => {
     if (!isOpen) return;
     lastFocused.current = document.activeElement;
+    const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
     const onKey = (e) => {
@@ -55,7 +56,7 @@ const Modal = ({
 
     return () => {
       document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = "";
+      document.body.style.overflow = prevOverflow;
       lastFocused.current?.focus?.();
     };
   }, [isOpen, onClose]);

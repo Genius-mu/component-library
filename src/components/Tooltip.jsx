@@ -1,6 +1,6 @@
 // Tooltip.jsx
-import { useState, useId } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useId, useRef, useEffect } from "react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { cn } from "../utils/cn";
 
 const positions = {
@@ -20,15 +20,19 @@ const offsets = {
 const Tooltip = ({ children, text, position = "top", delay = 0, className = "" }) => {
   const [show, setShow] = useState(false);
   const id = useId();
-  let timer;
+  const timer = useRef();
+  const reduce = useReducedMotion();
 
   const open = () => {
-    timer = setTimeout(() => setShow(true), delay);
+    clearTimeout(timer.current);
+    timer.current = setTimeout(() => setShow(true), delay);
   };
   const close = () => {
-    clearTimeout(timer);
+    clearTimeout(timer.current);
     setShow(false);
   };
+
+  useEffect(() => () => clearTimeout(timer.current), []);
 
   return (
     <div
@@ -45,9 +49,9 @@ const Tooltip = ({ children, text, position = "top", delay = 0, className = "" }
           <motion.div
             id={id}
             role="tooltip"
-            initial={{ opacity: 0, scale: 0.9, ...offsets[position] }}
+            initial={{ opacity: 0, scale: reduce ? 1 : 0.9, ...offsets[position] }}
             animate={{ opacity: 1, scale: 1, x: 0, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, ...offsets[position] }}
+            exit={{ opacity: 0, scale: reduce ? 1 : 0.9, ...offsets[position] }}
             transition={{ duration: 0.15 }}
             className={cn(
               "absolute z-50 px-3 py-1.5 bg-[var(--surface)] border border-[var(--border)] rounded-lg text-sm text-[var(--text)] whitespace-nowrap shadow-2xl pointer-events-none",

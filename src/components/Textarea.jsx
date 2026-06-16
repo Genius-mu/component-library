@@ -43,8 +43,8 @@ const Textarea = forwardRef(
           className={cn(
             "px-4 py-3 rounded-xl bg-[var(--surface)] border text-[var(--text)] focus:outline-none transition-colors resize-y",
             error
-              ? "border-red-500/60 focus:border-red-500"
-              : "border-[var(--border)] focus:border-[var(--primary)]"
+              ? "border-red-500/60 focus:border-red-500 focus:ring-4 focus:ring-red-500/10"
+              : "border-[var(--border)] focus:border-[var(--primary)] focus:ring-4 focus:ring-[var(--primary)]/10"
           )}
           {...props}
         />

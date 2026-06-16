@@ -29,16 +29,37 @@ const Drawer = ({
   const sz = sizeMap[size] || sizeMap.md;
   const cfg = (sideConfig[side] || sideConfig.right)(sz);
   const panelRef = useRef(null);
+  const lastFocused = useRef(null);
 
   useEffect(() => {
     if (!isOpen) return;
+    lastFocused.current = document.activeElement;
+    const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    const onEsc = (e) => e.key === "Escape" && onClose?.();
-    document.addEventListener("keydown", onEsc);
+    const onKey = (e) => {
+      if (e.key === "Escape") return onClose?.();
+      if (e.key === "Tab" && panelRef.current) {
+        const f = panelRef.current.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (!f.length) return;
+        const first = f[0];
+        const last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+    document.addEventListener("keydown", onKey);
     requestAnimationFrame(() => panelRef.current?.focus());
     return () => {
-      document.removeEventListener("keydown", onEsc);
-      document.body.style.overflow = "";
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevOverflow;
+      lastFocused.current?.focus?.();
     };
   }, [isOpen, onClose]);
 

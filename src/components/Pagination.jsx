@@ -1,4 +1,5 @@
 // Pagination.jsx
+import { memo, useMemo } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "../utils/cn";
 
@@ -23,15 +24,13 @@ const Pagination = ({
   const idle =
     "text-[var(--muted)] bg-[var(--surface)] border-[var(--border)] hover:bg-[var(--surface-hover)]";
 
-  const getVisiblePages = () => {
+  const visiblePages = useMemo(() => {
     const delta = Math.floor(maxVisiblePages / 2);
     let start = Math.max(1, currentPage - delta);
-    let end = Math.min(totalPages, start + maxVisiblePages - 1);
+    const end = Math.min(totalPages, start + maxVisiblePages - 1);
     if (end - start + 1 < maxVisiblePages) start = Math.max(1, end - maxVisiblePages + 1);
     return Array.from({ length: end - start + 1 }, (_, i) => start + i);
-  };
-
-  const visiblePages = getVisiblePages();
+  }, [currentPage, totalPages, maxVisiblePages]);
 
   return (
     <nav
@@ -94,4 +93,4 @@ const Pagination = ({
   );
 };
 
-export default Pagination;
+export default memo(Pagination);

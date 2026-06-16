@@ -17,6 +17,10 @@ const Dropdown = ({ trigger, items = [], onSelect, align = "right", className = 
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    if (!isOpen) setHighlight(-1);
+  }, [isOpen]);
+
   const pick = (item) => {
     item.onClick?.();
     onSelect?.(item);
@@ -69,6 +73,7 @@ const Dropdown = ({ trigger, items = [], onSelect, align = "right", className = 
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -10 }}
             transition={{ duration: 0.2 }}
+            style={{ transformOrigin: align === "right" ? "top right" : "top left" }}
             className={cn(
               "absolute mt-2 w-56 bg-[var(--surface)] border border-[var(--border)] rounded-xl shadow-2xl py-2 z-50",
               align === "right" ? "right-0" : "left-0"
@@ -80,6 +85,7 @@ const Dropdown = ({ trigger, items = [], onSelect, align = "right", className = 
                 <li key={idx} role="none">
                   <button
                     role="menuitem"
+                    ref={highlight === idx ? (el) => el?.scrollIntoView({ block: "nearest" }) : undefined}
                     onMouseEnter={() => setHighlight(idx)}
                     onClick={() => pick(item)}
                     className={cn(

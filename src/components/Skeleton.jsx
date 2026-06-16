@@ -51,4 +51,4 @@ const Skeleton = ({
 
 // NOTE: the `shimmer` keyframes live in the shipped stylesheet (index.css),
 // so this component is safe to import in SSR environments (Next.js, Remix).
-export default Skeleton;
+export default React.memo(Skeleton);

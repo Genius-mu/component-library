@@ -1,5 +1,6 @@
 // Spinner.jsx
-import { motion } from "framer-motion";
+import { memo } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import { cn } from "../utils/cn";
 
 const sizeClasses = {
@@ -21,6 +22,7 @@ const Spinner = ({
 }) => {
   // Back-compat: old variant names map to the two clean variants.
   const v = variant === "dot" || variant === "dots" ? "dots" : "ring";
+  const reduce = useReducedMotion();
 
   if (v === "dots") {
     return (
@@ -34,8 +36,8 @@ const Spinner = ({
           <motion.span
             key={i}
             className="size-2 rounded-full bg-[var(--primary)]"
-            animate={{ scale: [1, 1.4, 1], opacity: [0.5, 1, 0.5] }}
-            transition={{ duration: speed, repeat: Infinity, ease: "easeInOut", delay }}
+            animate={reduce ? { opacity: 0.7 } : { scale: [1, 1.4, 1], opacity: [0.5, 1, 0.5] }}
+            transition={reduce ? undefined : { duration: speed, repeat: Infinity, ease: "easeInOut", delay }}
           />
         ))}
         <span className="sr-only">{label}</span>
@@ -47,8 +49,8 @@ const Spinner = ({
     <motion.span
       role="status"
       aria-label={label}
-      animate={{ rotate: 360 }}
-      transition={{ duration: speed, repeat: Infinity, ease: "linear" }}
+      animate={reduce ? {} : { rotate: 360 }}
+      transition={reduce ? undefined : { duration: speed, repeat: Infinity, ease: "linear" }}
       className={cn(
         "inline-block rounded-full border-2 border-[var(--muted)]/30 border-t-[var(--primary)]",
         sizeClasses[size] || sizeClasses.md,
@@ -59,4 +61,4 @@ const Spinner = ({
   );
 };
 
-export default Spinner;
+export default memo(Spinner);
