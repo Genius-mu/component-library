@@ -71,3 +71,8 @@
 ::-webkit-scrollbar-thumb:hover {
   background: var(--primary);
 }
+
+
+body {
+  overflow-x: hidden;
+}
