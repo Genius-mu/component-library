@@ -28,19 +28,28 @@ const Pagination = ({
     const delta = Math.floor(maxVisiblePages / 2);
     let start = Math.max(1, currentPage - delta);
     const end = Math.min(totalPages, start + maxVisiblePages - 1);
-    if (end - start + 1 < maxVisiblePages) start = Math.max(1, end - maxVisiblePages + 1);
+    if (end - start + 1 < maxVisiblePages)
+      start = Math.max(1, end - maxVisiblePages + 1);
     return Array.from({ length: end - start + 1 }, (_, i) => start + i);
   }, [currentPage, totalPages, maxVisiblePages]);
 
   return (
     <nav
       aria-label="Pagination"
-      className={cn("flex items-center justify-center gap-1", className)}
+      className={cn(
+        "flex flex-wrap items-center justify-center gap-1",
+        className,
+      )}
     >
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className={cn(base, idle, pad, "flex items-center disabled:opacity-50 disabled:cursor-not-allowed")}
+        className={cn(
+          base,
+          idle,
+          pad,
+          "flex items-center disabled:opacity-50 disabled:cursor-not-allowed",
+        )}
         aria-label="Previous page"
       >
         <ChevronLeft className="size-4" />
@@ -48,8 +57,15 @@ const Pagination = ({
 
       {showFirstLast && visiblePages[0] > 1 && (
         <>
-          <button onClick={() => onPageChange(1)} className={cn(base, idle, pad)}>1</button>
-          {visiblePages[0] > 2 && <span className="px-2 text-[var(--muted)]">…</span>}
+          <button
+            onClick={() => onPageChange(1)}
+            className={cn(base, idle, pad)}
+          >
+            1
+          </button>
+          {visiblePages[0] > 2 && (
+            <span className="px-2 text-[var(--muted)]">…</span>
+          )}
         </>
       )}
 
@@ -63,7 +79,7 @@ const Pagination = ({
             pad,
             page === currentPage
               ? "bg-[var(--primary)] text-white border-[var(--primary)]"
-              : idle
+              : idle,
           )}
         >
           {page}
@@ -75,7 +91,10 @@ const Pagination = ({
           {visiblePages[visiblePages.length - 1] < totalPages - 1 && (
             <span className="px-2 text-[var(--muted)]">…</span>
           )}
-          <button onClick={() => onPageChange(totalPages)} className={cn(base, idle, pad)}>
+          <button
+            onClick={() => onPageChange(totalPages)}
+            className={cn(base, idle, pad)}
+          >
             {totalPages}
           </button>
         </>
@@ -84,7 +103,12 @@ const Pagination = ({
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className={cn(base, idle, pad, "flex items-center disabled:opacity-50 disabled:cursor-not-allowed")}
+        className={cn(
+          base,
+          idle,
+          pad,
+          "flex items-center disabled:opacity-50 disabled:cursor-not-allowed",
+        )}
         aria-label="Next page"
       >
         <ChevronRight className="size-4" />
