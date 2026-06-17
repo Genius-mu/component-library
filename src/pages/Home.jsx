@@ -71,7 +71,7 @@ const Mark = () => (
 const Eyebrow = ({ children, center = false }) => (
   <p
     className={cn(
-      "font-mono text-[13px] sm:text-xs uppercase tracking-[0.3em] text-white/40",
+      "font-mono text-[10px] sm:text-xs uppercase tracking-[0.3em] text-white/40",
       center && "text-center",
     )}
   >
