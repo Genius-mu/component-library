@@ -252,7 +252,7 @@ function HomePage() {
             initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="mt-6 text-4xl md:text-5xl lg:text-5xl font-bold tracking-tight leading-[1.02] text-white"
+            className="mt-6 text-3xl md:text-5xl lg:text-5xl font-bold tracking-tight leading-[1.02] text-white"
           >
             The component layer
             <br />
