@@ -170,6 +170,7 @@ function HomePage() {
           { label: "Docs", href: "/docs" },
         ]}
         linkComponent={Link}
+        showThemeToggle={false}
       />
 
       {/* ---------- Hero (asymmetric, ether shows through) ---------- */}
