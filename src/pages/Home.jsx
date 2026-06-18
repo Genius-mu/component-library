@@ -1,5 +1,5 @@
 // Home.jsx
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
@@ -12,11 +12,6 @@ import {
   ShieldCheck,
   Braces,
   Terminal,
-  Mail,
-  Lock,
-  User,
-  Settings,
-  LogOut,
 } from "lucide-react";
 
 import { cn } from "../utils/cn";
@@ -25,30 +20,10 @@ import { useToast } from "../context/ToastContext";
 import Navbar from "../components/Navbar";
 import ProgressBar from "../components/ProgressBar";
 import Button from "../components/Button";
-import Input from "../components/Input";
-import Textarea from "../components/Textarea";
-import Select from "../components/Select";
-import Checkbox from "../components/Checkbox";
-import Radio, { RadioGroup } from "../components/Radio";
-import Switch from "../components/Switch";
-import Slider from "../components/Slider";
-import Modal from "../components/Modal";
-import Drawer from "../components/Drawer";
-import Accordion from "../components/Accordion";
-import Tooltip from "../components/Tooltip";
-import Tabs from "../components/Tabs";
-import Dropdown from "../components/Dropdown";
 import Carousel from "../components/Carousel";
-import Alert from "../components/Alert";
-import Badge from "../components/Badge";
-import Spinner from "../components/Spinner";
-import Pagination from "../components/Pagination";
-import Skeleton from "../components/Skeleton";
-import Table from "../components/Table";
-import Avatar, { AvatarGroup } from "../components/Avatar";
 
-/* Scope the brand accent to the ether's violet — this also re-skins every
-   library component on the page (a live demo of the theming system). */
+/* Scope the brand accent to the ether's violet — also re-skins the live
+   component previews (a quiet demo of the theming system). */
 const ACCENT = {
   "--primary": "#5227FF",
   "--primary-hover": "#6743ff",
@@ -105,22 +80,6 @@ const Section = ({ children, divide = true, className = "" }) => (
   </motion.section>
 );
 
-const Panel = ({ label, children, className = "" }) => (
-  <div
-    className={cn(
-      "rounded-2xl border border-white/10 bg-white/[0.025] p-6 backdrop-blur-xl",
-      className,
-    )}
-  >
-    {label && (
-      <p className="font-mono text-[0.7rem] uppercase tracking-widest text-white/40 mb-5">
-        {label}
-      </p>
-    )}
-    {children}
-  </div>
-);
-
 const Tile = ({ icon: Icon, label }) => (
   <div className="flex flex-col items-center gap-2">
     <div className="grid place-items-center size-16 rounded-2xl border border-white/12 bg-white/[0.04] text-white/80">
@@ -144,6 +103,36 @@ const Step = ({ n, title, children }) => (
   </div>
 );
 
+const Stat = ({ value, label }) => (
+  <div className="text-center">
+    <div className="text-4xl md:text-5xl font-bold tracking-tight text-white">
+      {value}
+    </div>
+    <div className="mt-1 font-mono text-xs uppercase tracking-widest text-white/40">
+      {label}
+    </div>
+  </div>
+);
+
+// A featured component preview that links to its section on the gallery.
+const FeatureCard = ({ id, name, desc, children }) => (
+  <Link
+    to={`/components#${id}`}
+    className="group block rounded-2xl border border-white/10 bg-white/[0.025] backdrop-blur-xl overflow-hidden transition-colors hover:border-[var(--primary)]/40"
+  >
+    <div className="grid place-items-center p-10 min-h-[200px] border-b border-white/[0.07]">
+      {children}
+    </div>
+    <div className="flex items-center justify-between px-6 py-4">
+      <span>
+        <span className="block font-semibold text-white">{name}</span>
+        <span className="block text-sm text-white/50">{desc}</span>
+      </span>
+      <ArrowRight className="size-5 text-white/40 transition-all group-hover:text-[var(--primary)] group-hover:translate-x-1" />
+    </div>
+  </Link>
+);
+
 const InstallPill = ({ copied, onCopy }) => (
   <button
     onClick={onCopy}
@@ -158,44 +147,11 @@ const InstallPill = ({ copied, onCopy }) => (
   </button>
 );
 
-/* ---------- Data ---------- */
-
-const FRAMEWORKS = [
-  { label: "React", value: "react" },
-  { label: "Next.js", value: "next" },
-  { label: "Remix", value: "remix" },
-];
-
-const USERS = [
-  { id: 1, name: "Ada Lovelace", role: "Engineer", presence: "online" },
-  { id: 2, name: "Alan Turing", role: "Researcher", presence: "away" },
-  { id: 3, name: "Grace Hopper", role: "Admiral", presence: "busy" },
-];
-
 /* ---------- Page ---------- */
 
 function HomePage() {
   const toast = useToast();
-
-  const [modalOpen, setModalOpen] = useState(false);
-  const [drawer, setDrawer] = useState({ open: false, side: "right" });
   const [copied, setCopied] = useState(false);
-  const [page, setPage] = useState(1);
-  const [wifi, setWifi] = useState(true);
-  const [agree, setAgree] = useState(false);
-  const [plan, setPlan] = useState("pro");
-  const [framework, setFramework] = useState("react");
-  const [volume, setVolume] = useState(60);
-  const [bio, setBio] = useState("");
-  const [progress, setProgress] = useState(20);
-
-  useEffect(() => {
-    const t = setInterval(
-      () => setProgress((p) => (p >= 100 ? 0 : p + 5)),
-      900,
-    );
-    return () => clearInterval(t);
-  }, []);
 
   const handleCopy = () => {
     navigator.clipboard?.writeText("npm i morgu");
@@ -203,34 +159,6 @@ function HomePage() {
     toast.success("Copied to clipboard");
     setTimeout(() => setCopied(false), 2000);
   };
-
-  const tableColumns = [
-    {
-      key: "name",
-      header: "Name",
-      render: (v, row) => (
-        <span className="flex items-center gap-2">
-          <Avatar name={v} size="sm" status={row.presence} />
-          {v}
-        </span>
-      ),
-    },
-    { key: "role", header: "Role" },
-    {
-      key: "presence",
-      header: "Status",
-      render: (v) => (
-        <Badge
-          variant={
-            v === "online" ? "success" : v === "busy" ? "danger" : "warning"
-          }
-          dot
-        >
-          {v}
-        </Badge>
-      ),
-    },
-  ];
 
   return (
     <div style={ACCENT}>
@@ -315,12 +243,17 @@ function HomePage() {
 
       {/* ---------- Structured body shell (calms the ether) ---------- */}
       <div className="relative bg-[#06060a]/85 backdrop-blur-2xl border-t border-white/[0.07]">
-        {/* Agnostic strapline */}
+        {/* Strapline + stats */}
         <Section divide={false} className="py-20 text-center">
           <Eyebrow center>language &amp; framework agnostic</Eyebrow>
           <h2 className="mt-4 text-3xl md:text-5xl font-bold tracking-tight text-white max-w-3xl mx-auto">
             One cohesive system for every screen
           </h2>
+          <div className="mt-14 grid grid-cols-3 gap-6 max-w-2xl mx-auto">
+            <Stat value="29" label="Components" />
+            <Stat value="8" label="Backgrounds" />
+            <Stat value="0" label="Runtime deps" />
+          </div>
         </Section>
 
         {/* Steps */}
@@ -347,373 +280,65 @@ function HomePage() {
           </div>
         </Section>
 
-        {/* Buttons */}
+        {/* Featured previews (just two, each links into the gallery) */}
         <Section>
           <SectionHead
-            eyebrow="actions"
-            title="Buttons"
-            lead="Six variants, three sizes, loading and icon states."
-          />
-          <Panel label="Variants" className="mb-6">
-            <div className="flex flex-wrap gap-3">
-              <Button>Primary</Button>
-              <Button variant="secondary">Secondary</Button>
-              <Button variant="outline">Outline</Button>
-              <Button variant="ghost">Ghost</Button>
-              <Button variant="danger">Danger</Button>
-              <Button variant="success">Success</Button>
-            </div>
-          </Panel>
-          <Panel label="Sizes & states">
-            <div className="flex flex-wrap items-center gap-3">
-              <Button size="sm">Small</Button>
-              <Button size="md">Medium</Button>
-              <Button size="lg">Large</Button>
-              <Button loading>Saving</Button>
-              <Button icon={ArrowRight} iconPosition="right">
-                Icon
-              </Button>
-              <Button disabled>Disabled</Button>
-            </div>
-          </Panel>
-        </Section>
-
-        {/* Form */}
-        <Section>
-          <SectionHead
-            eyebrow="inputs"
-            title="Form controls"
-            lead="Inputs, selects, toggles and sliders — all keyboard accessible."
+            eyebrow="a taste of the kit"
+            title="Built to feel premium"
+            lead="A couple of the 29 components, live. Tap either to see it in the full gallery."
           />
           <div className="grid md:grid-cols-2 gap-6">
-            <Panel label="Text fields">
-              <div className="space-y-5">
-                <Input
-                  label="Email"
-                  type="email"
-                  leftIcon={Mail}
-                  placeholder="you@example.com"
-                  hint="We'll never share it."
-                />
-                <Input
-                  label="Password"
-                  type="password"
-                  leftIcon={Lock}
-                  placeholder="••••••••"
-                  error="Password is too short"
-                />
-                <Textarea
-                  label="Bio"
-                  placeholder="Tell us about yourself"
-                  maxLength={120}
-                  showCount
-                  value={bio}
-                  onChange={(e) => setBio(e.target.value)}
-                />
-              </div>
-            </Panel>
-            <Panel label="Choices">
-              <div className="space-y-6">
-                <Select
-                  label="Framework"
-                  options={FRAMEWORKS}
-                  value={framework}
-                  onChange={setFramework}
-                />
-                <div className="flex flex-col gap-3">
-                  <Checkbox
-                    checked={agree}
-                    onChange={setAgree}
-                    label="I agree to the terms"
-                    description="You can opt out anytime."
-                  />
-                  <Switch
-                    checked={wifi}
-                    onChange={setWifi}
-                    label="Enable Wi-Fi"
-                  />
-                </div>
-                <RadioGroup
-                  value={plan}
-                  onChange={setPlan}
-                  orientation="horizontal"
-                >
-                  <Radio value="free" label="Free" />
-                  <Radio value="pro" label="Pro" />
-                  <Radio value="team" label="Team" />
-                </RadioGroup>
-                <Slider
-                  label="Volume"
-                  value={volume}
-                  onChange={setVolume}
-                  formatValue={(v) => `${v}%`}
-                />
-              </div>
-            </Panel>
-          </div>
-        </Section>
-
-        {/* Overlays */}
-        <Section>
-          <SectionHead eyebrow="overlays" title="Modals, drawers & menus" />
-          <div className="grid md:grid-cols-3 gap-6">
-            <Panel label="Modal">
-              <Button onClick={() => setModalOpen(true)}>Open modal</Button>
-            </Panel>
-            <Panel label="Drawer">
-              <div className="flex flex-wrap gap-2">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => setDrawer({ open: true, side: "right" })}
-                >
-                  Right
+            <FeatureCard
+              id="button"
+              name="Button"
+              desc="Soft halo, depth glow and a sheen sweep on hover."
+            >
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <Button icon={ArrowRight} iconPosition="right">
+                  Primary
                 </Button>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => setDrawer({ open: true, side: "left" })}
-                >
-                  Left
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => setDrawer({ open: true, side: "bottom" })}
-                >
-                  Bottom
-                </Button>
+                <Button variant="outline">Outline</Button>
               </div>
-            </Panel>
-            <Panel label="Dropdown">
-              <Dropdown
-                trigger={
-                  <span className="flex items-center gap-2">
-                    <User className="size-4" /> Account
-                  </span>
-                }
-                items={[
-                  {
-                    label: "Profile",
-                    icon: User,
-                    onClick: () => toast.info("Profile"),
-                  },
-                  {
-                    label: "Settings",
-                    icon: Settings,
-                    onClick: () => toast.info("Settings"),
-                  },
-                  {
-                    label: "Log out",
-                    icon: LogOut,
-                    danger: true,
-                    onClick: () => toast.error("Logged out"),
-                  },
-                ]}
-              />
-            </Panel>
-          </div>
-        </Section>
+            </FeatureCard>
 
-        {/* Feedback */}
-        <Section>
-          <SectionHead eyebrow="feedback" title="Status & notifications" />
-          <div className="grid md:grid-cols-2 gap-6">
-            <Panel label="Alerts">
-              <div className="space-y-3">
-                <Alert variant="info" title="Heads up">
-                  This is an informational message.
-                </Alert>
-                <Alert
-                  variant="success"
-                  dismissible
-                  onDismiss={() => toast.info("Alert dismissed")}
-                >
-                  Operation completed successfully.
-                </Alert>
-                <Alert
-                  variant="warning"
-                  action={
-                    <Button size="sm" variant="outline">
-                      Review
-                    </Button>
-                  }
-                >
-                  This action is irreversible.
-                </Alert>
+            <FeatureCard
+              id="carousel"
+              name="Carousel"
+              desc="Drag, autoplay and keyboard — motion built in."
+            >
+              <div className="w-full">
+                <Carousel
+                  height="150px"
+                  interval={3500}
+                  slides={[
+                    <div className="h-full bg-gradient-to-br from-[#5227FF] to-[#B497CF] grid place-items-center text-white text-xl font-bold">
+                      Slide 1
+                    </div>,
+                    <div className="h-full bg-gradient-to-br from-[#FF9FFC] to-[#5227FF] grid place-items-center text-white text-xl font-bold">
+                      Slide 2
+                    </div>,
+                    <div className="h-full bg-gradient-to-br from-[#B497CF] to-[#FF9FFC] grid place-items-center text-white text-xl font-bold">
+                      Slide 3
+                    </div>,
+                  ]}
+                />
               </div>
-            </Panel>
-            <div className="space-y-6">
-              <Panel label="Toasts — useToast()">
-                <div className="flex flex-wrap gap-3">
-                  <Button
-                    size="sm"
-                    onClick={() => toast.info("Just so you know")}
-                  >
-                    Info
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="success"
-                    onClick={() => toast.success("All done!")}
-                  >
-                    Success
-                  </Button>
-                  <Button
-                    size="sm"
-                    onClick={() => toast.warning("Careful now")}
-                  >
-                    Warning
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="danger"
-                    onClick={() => toast.error("It broke")}
-                  >
-                    Error
-                  </Button>
-                </div>
-              </Panel>
-              <Panel label="Badges, spinners & progress">
-                <div className="flex flex-wrap items-center gap-3 mb-4">
-                  <Badge variant="primary">New</Badge>
-                  <Badge variant="success" dot>
-                    Live
-                  </Badge>
-                  <Badge
-                    variant="outline"
-                    onRemove={() => toast.info("Removed")}
-                  >
-                    Removable
-                  </Badge>
-                  <Spinner size="sm" />
-                  <Spinner variant="dots" />
-                </div>
-                <ProgressBar value={progress} max={100} showLabel height={8} />
-              </Panel>
-            </div>
+            </FeatureCard>
           </div>
-        </Section>
 
-        {/* Data */}
-        <Section>
-          <SectionHead eyebrow="data" title="Tables, avatars & skeletons" />
-          <Panel label="Sortable table — click a row" className="mb-6">
-            <Table
-              columns={tableColumns}
-              data={USERS}
-              striped
-              onRowClick={(row) => toast.info(`Selected ${row.name}`)}
-            />
-          </Panel>
-          <div className="grid md:grid-cols-2 gap-6">
-            <Panel label="Avatars">
-              <div className="flex items-center gap-6">
-                <Avatar name="Ada Lovelace" status="online" />
-                <Avatar name="Alan Turing" size="lg" ring />
-                <AvatarGroup max={3}>
-                  <Avatar name="A B" />
-                  <Avatar name="C D" />
-                  <Avatar name="E F" />
-                  <Avatar name="G H" />
-                  <Avatar name="I J" />
-                </AvatarGroup>
-              </div>
-            </Panel>
-            <Panel label="Skeleton loading">
-              <div className="flex gap-4">
-                <Skeleton variant="circle" height="56px" width="56px" />
-                <div className="flex-1 space-y-2 pt-1">
-                  <Skeleton variant="text" lines={3} />
-                </div>
-              </div>
-            </Panel>
-          </div>
-        </Section>
-
-        {/* Navigation */}
-        <Section>
-          <SectionHead eyebrow="navigation" title="Tabs, accordion & more" />
-          <div className="grid md:grid-cols-2 gap-6">
-            <Panel label="Tabs — pill">
-              <Tabs
-                variant="pill"
-                tabs={[
-                  {
-                    label: "Overview",
-                    content: (
-                      <p className="text-white/60">
-                        Springy pill tabs with a shared layout animation.
-                      </p>
-                    ),
-                  },
-                  {
-                    label: "Features",
-                    content: (
-                      <p className="text-white/60">
-                        The active indicator slides between tabs.
-                      </p>
-                    ),
-                  },
-                  {
-                    label: "Pricing",
-                    content: (
-                      <p className="text-white/60">
-                        Arrow keys move between tabs too.
-                      </p>
-                    ),
-                  },
-                ]}
-              />
-            </Panel>
-            <Panel label="Accordion">
-              <Accordion
-                title="Is it accessible?"
-                icon={ShieldCheck}
-                defaultOpen
-              >
-                ARIA roles, keyboard support, and focus management throughout.
-              </Accordion>
-              <Accordion title="Is it themeable?" icon={Palette}>
-                Every color is a CSS variable you can override.
-              </Accordion>
-              <Accordion title="Is it typed?" icon={Braces}>
-                Ships with complete TypeScript declarations.
-              </Accordion>
-            </Panel>
-          </div>
-          <div className="mt-6 grid md:grid-cols-2 gap-6">
-            <Panel label="Pagination">
-              <Pagination
-                currentPage={page}
-                totalPages={12}
-                onPageChange={setPage}
-                maxVisiblePages={5}
-              />
-            </Panel>
-            <Panel label="Carousel — drag, autoplay, keyboard">
-              <Carousel
-                height="200px"
-                interval={4000}
-                slides={[
-                  <div className="h-full bg-gradient-to-br from-[#5227FF] to-[#B497CF] grid place-items-center text-white text-2xl font-bold">
-                    Slide 1
-                  </div>,
-                  <div className="h-full bg-gradient-to-br from-[#FF9FFC] to-[#5227FF] grid place-items-center text-white text-2xl font-bold">
-                    Slide 2
-                  </div>,
-                  <div className="h-full bg-gradient-to-br from-[#B497CF] to-[#FF9FFC] grid place-items-center text-white text-2xl font-bold">
-                    Slide 3
-                  </div>,
-                ]}
-              />
-            </Panel>
+          <div className="mt-10 text-center">
+            <Link
+              to="/components"
+              className="inline-flex items-center gap-2 font-mono text-sm text-[#A78BFA] hover:text-white transition-colors"
+            >
+              See all 29 components <ArrowRight className="size-4" />
+            </Link>
           </div>
         </Section>
 
         {/* CTA band */}
         <Section>
-          <Panel className="p-10 md:p-14 text-center border-white/12 bg-white/[0.04]">
+          <div className="rounded-2xl border border-white/12 bg-white/[0.04] p-10 md:p-14 text-center backdrop-blur-xl">
             <Eyebrow center>ship faster</Eyebrow>
             <h2 className="mt-4 text-3xl md:text-4xl font-bold tracking-tight text-white">
               Drop Morgu into your next project
@@ -730,7 +355,7 @@ function HomePage() {
                 </Button>
               </Link>
             </div>
-          </Panel>
+          </div>
         </Section>
 
         {/* Footer */}
@@ -755,45 +380,6 @@ function HomePage() {
           </div>
         </footer>
       </div>
-
-      {/* ---------- Mounted overlays ---------- */}
-      <Modal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        title="Welcome to Morgu"
-        footer={
-          <>
-            <Button variant="ghost" onClick={() => setModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button
-              onClick={() => {
-                setModalOpen(false);
-                toast.success("Nice!");
-              }}
-            >
-              Confirm
-            </Button>
-          </>
-        }
-      >
-        <p className="text-[var(--muted)]">
-          This modal traps focus, locks body scroll, animates in and out, and
-          closes on Escape or backdrop click.
-        </p>
-      </Modal>
-
-      <Drawer
-        isOpen={drawer.open}
-        side={drawer.side}
-        onClose={() => setDrawer((d) => ({ ...d, open: false }))}
-        title="Drawer panel"
-      >
-        <p className="text-[var(--muted)]">
-          Slides in from the {drawer.side}. Press Escape or click the backdrop
-          to close.
-        </p>
-      </Drawer>
     </div>
   );
 }
