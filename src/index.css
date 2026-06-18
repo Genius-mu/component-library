@@ -50,6 +50,8 @@
     color-scheme: dark light;
     background: var(--bg);
     color: var(--text);
+    /* Firefox: pin scrollbar to constant dark colors so it never flips */
+    scrollbar-color: oklch(0.7 0.02 240) oklch(0.14 0.02 240);
   }
 
   body {
@@ -57,19 +59,20 @@
   }
 }
 
-/* Scrollbar */
+/* Scrollbar — hardcoded constant colors, fully theme-independent */
 ::-webkit-scrollbar {
   width: 8px;
+  /* height: 8px; */
 }
 ::-webkit-scrollbar-track {
-  background: var(--surface);
+  background: oklch(0.14 0.02 240);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--muted);
+  background: oklch(0.7 0.02 240);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--primary);
+  background: oklch(0.72 0.18 200);
 }
 
 body {
