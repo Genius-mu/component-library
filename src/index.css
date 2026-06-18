@@ -14,13 +14,13 @@
   --color-muted-dark: oklch(0.7 0.02 240);
   --color-border-dark: oklch(0.2 0.02 240);
 
-  /* Light mode */
-  --color-background-light: oklch(0.98 0.01 0);
-  --color-surface-light: oklch(0.96 0.01 0);
-  --color-surface-hover-light: oklch(0.94 0.01 0);
-  --color-text-light: oklch(0.15 0.02 240);
-  --color-muted-light: oklch(0.5 0.02 240);
-  --color-border-light: oklch(0.85 0.01 240);
+  /* Light mode — soft slate page, white surfaces that sit above it */
+  --color-background-light: oklch(0.97 0.003 255);
+  --color-surface-light: oklch(0.995 0.0015 255);
+  --color-surface-hover-light: oklch(0.955 0.004 255);
+  --color-text-light: oklch(0.21 0.02 262);
+  --color-muted-light: oklch(0.52 0.016 262);
+  --color-border-light: oklch(0.91 0.004 255);
 }
 
 @layer base {
@@ -71,7 +71,6 @@
 ::-webkit-scrollbar-thumb:hover {
   background: var(--primary);
 }
-
 
 body {
   overflow-x: hidden;
