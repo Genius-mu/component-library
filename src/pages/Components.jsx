@@ -1,6 +1,6 @@
 // Components.jsx
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   ArrowLeft,
   Copy,
@@ -749,6 +749,7 @@ const Components = () => {
       next[i] = val;
       return next;
     });
+  const location = useLocation();
 
   useEffect(() => {
     const obs = new IntersectionObserver(
@@ -766,6 +767,19 @@ const Components = () => {
     });
     return () => obs.disconnect();
   }, []);
+
+  // Scroll to a section when arriving via a hash link (e.g. /components#button).
+  useEffect(() => {
+    if (!location.hash) return;
+    const el = document.getElementById(location.hash.slice(1));
+    if (el) {
+      const t = setTimeout(
+        () => el.scrollIntoView({ behavior: "smooth", block: "start" }),
+        120,
+      );
+      return () => clearTimeout(t);
+    }
+  }, [location]);
 
   const go = (id) =>
     document
