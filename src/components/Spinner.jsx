@@ -12,6 +12,10 @@ const sizeClasses = {
   "2xl": "size-12",
 };
 
+// Circular mask that punches out the centre, leaving a 3px ring.
+const RING_MASK =
+  "radial-gradient(farthest-side, #0000 calc(100% - 3px), #000 calc(100% - 3px))";
+
 const Spinner = ({
   size = "md",
   variant = "ring", // "ring" | "dots"
@@ -20,7 +24,6 @@ const Spinner = ({
   className = "",
   ...props
 }) => {
-  // Back-compat: old variant names map to the two clean variants.
   const v = variant === "dot" || variant === "dots" ? "dots" : "ring";
   const reduce = useReducedMotion();
 
@@ -36,8 +39,21 @@ const Spinner = ({
           <motion.span
             key={i}
             className="size-2 rounded-full bg-[var(--primary)]"
-            animate={reduce ? { opacity: 0.7 } : { scale: [1, 1.4, 1], opacity: [0.5, 1, 0.5] }}
-            transition={reduce ? undefined : { duration: speed, repeat: Infinity, ease: "easeInOut", delay }}
+            animate={
+              reduce
+                ? { opacity: 0.7 }
+                : { scale: [1, 1.4, 1], opacity: [0.5, 1, 0.5] }
+            }
+            transition={
+              reduce
+                ? undefined
+                : {
+                    duration: speed,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay,
+                  }
+            }
           />
         ))}
         <span className="sr-only">{label}</span>
@@ -45,17 +61,28 @@ const Spinner = ({
     );
   }
 
+  // Premium ring: a conic "comet" gradient masked into a thin ring.
   return (
     <motion.span
       role="status"
       aria-label={label}
       animate={reduce ? {} : { rotate: 360 }}
-      transition={reduce ? undefined : { duration: speed, repeat: Infinity, ease: "linear" }}
+      transition={
+        reduce
+          ? undefined
+          : { duration: speed, repeat: Infinity, ease: "linear" }
+      }
       className={cn(
-        "inline-block rounded-full border-2 border-[var(--muted)]/30 border-t-[var(--primary)]",
+        "inline-block rounded-full",
         sizeClasses[size] || sizeClasses.md,
-        className
+        className,
       )}
+      style={{
+        background:
+          "conic-gradient(from 0deg, transparent 0deg, var(--primary) 300deg, var(--primary) 360deg)",
+        WebkitMask: RING_MASK,
+        mask: RING_MASK,
+      }}
       {...props}
     />
   );
