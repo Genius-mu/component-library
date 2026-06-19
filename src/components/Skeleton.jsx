@@ -7,8 +7,9 @@ const Skeleton = ({
   variant = "text",
   lines = 1,
 }) => {
-  const baseClasses =
-    "animate-pulse bg-gradient-to-r from-[var(--border)] via-[var(--surface)] to-[var(--border)] bg-[length:200%_100%]";
+  // Moving sheen via the `shimmer` keyframes shipped in index.css.
+  const base =
+    "bg-gradient-to-r from-[var(--border)] via-[var(--surface-hover)] to-[var(--border)] bg-[length:200%_100%] animate-[shimmer_1.6s_linear_infinite]";
 
   const variantClasses = {
     text: "rounded",
@@ -23,11 +24,11 @@ const Skeleton = ({
         {Array.from({ length: lines }, (_, i) => (
           <div
             key={i}
-            className={`${baseClasses} ${variantClasses.text}`}
+            className={`${base} ${variantClasses.text}`}
             style={{
               width: i === lines - 1 ? "60%" : width,
               height,
-              animationDelay: `${i * 0.1}s`,
+              animationDelay: `${i * 0.12}s`,
             }}
           />
         ))}
@@ -37,14 +38,8 @@ const Skeleton = ({
 
   return (
     <div
-      className={`${baseClasses} ${variantClasses[variant]} ${className}`}
-      style={{
-        width,
-        height,
-        backgroundImage:
-          "linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)",
-        animation: "shimmer 1.5s infinite",
-      }}
+      className={`${base} ${variantClasses[variant] || variantClasses.text} ${className}`}
+      style={{ width, height }}
     />
   );
 };
