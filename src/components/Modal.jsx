@@ -36,7 +36,7 @@ const Modal = ({
       if (e.key === "Escape") onClose?.();
       if (e.key === "Tab" && panelRef.current) {
         const focusables = panelRef.current.querySelectorAll(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
         );
         if (!focusables.length) return;
         const first = focusables[0];
@@ -51,7 +51,6 @@ const Modal = ({
       }
     };
     document.addEventListener("keydown", onKey);
-    // focus the panel after mount
     requestAnimationFrame(() => panelRef.current?.focus());
 
     return () => {
@@ -69,7 +68,7 @@ const Modal = ({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.25 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4"
           onClick={() => closeOnBackdrop && onClose?.()}
         >
           <motion.div
@@ -83,16 +82,16 @@ const Modal = ({
             exit={{ scale: 0.92, opacity: 0, y: 12 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
             className={cn(
-              "relative w-full p-8 rounded-2xl bg-[var(--surface)] border border-[var(--border)] focus:outline-none max-h-[90vh] overflow-auto",
+              "relative w-full p-8 rounded-2xl bg-[var(--surface)] border border-[var(--border)] ring-1 ring-white/5 shadow-2xl shadow-black/40 focus:outline-none max-h-[90vh] overflow-auto",
               sizes[size] || sizes.md,
-              className
+              className,
             )}
             onClick={(e) => e.stopPropagation()}
           >
             {!hideClose && (
               <button
                 onClick={onClose}
-                className="absolute top-4 right-4 text-[var(--muted)] hover:text-[var(--primary)] transition-colors"
+                className="absolute top-4 right-4 grid place-items-center size-8 rounded-lg text-[var(--muted)] hover:text-[var(--primary)] hover:bg-[var(--surface-hover)] transition-colors"
                 aria-label="Close dialog"
               >
                 <X className="size-5" />

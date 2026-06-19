@@ -21,7 +21,10 @@ const ProgressBar = ({
   if (value === undefined || value === null) {
     return (
       <motion.div
-        className={cn("fixed top-0 left-0 right-0 bg-[var(--primary)] origin-left z-50", className)}
+        className={cn(
+          "fixed top-0 left-0 right-0 bg-[var(--primary)] origin-left z-50 shadow-[0_0_10px_var(--primary)]",
+          className,
+        )}
         style={{ scaleX: scrollYProgress, height }}
         transition={{ type: "spring", stiffness: 100, damping: 30 }}
       />
@@ -47,7 +50,7 @@ const ProgressBar = ({
         aria-valuemax={max}
       >
         <motion.div
-          className="relative h-full rounded-full bg-[var(--primary)] overflow-hidden"
+          className="relative h-full rounded-full bg-gradient-to-r from-[var(--primary)] to-[var(--primary-hover)] shadow-[0_0_10px_-1px_var(--primary)] overflow-hidden"
           initial={{ width: 0 }}
           animate={{ width: `${pct}%` }}
           transition={{ type: "spring", stiffness: 120, damping: 25 }}
