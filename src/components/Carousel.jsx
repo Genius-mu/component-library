@@ -24,6 +24,9 @@ const variants = {
   }),
 };
 
+const arrowCls =
+  "absolute top-1/2 -translate-y-1/2 grid place-items-center size-11 bg-[var(--surface)]/80 backdrop-blur-md rounded-full shadow-lg border border-[var(--border)] hover:bg-[var(--surface-hover)] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]/50";
+
 const Carousel = ({
   slides = [],
   autoPlay = true,
@@ -62,7 +65,10 @@ const Carousel = ({
 
   return (
     <div
-      className={cn("relative w-full overflow-hidden rounded-3xl shadow-2xl outline-none", className)}
+      className={cn(
+        "relative w-full overflow-hidden rounded-3xl shadow-2xl outline-none",
+        className,
+      )}
       style={{ height }}
       tabIndex={0}
       role="region"
@@ -98,34 +104,38 @@ const Carousel = ({
 
       {showArrows && slides.length > 1 && (
         <>
-          <button
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
             onClick={() => paginate(-1)}
-            className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-[var(--surface)]/70 backdrop-blur-md rounded-full hover:bg-[var(--surface-hover)] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]/50"
+            className={cn(arrowCls, "left-4")}
             aria-label="Previous slide"
           >
             <ChevronLeft className="size-6 text-[var(--text)]" />
-          </button>
-          <button
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
             onClick={() => paginate(1)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-[var(--surface)]/70 backdrop-blur-md rounded-full hover:bg-[var(--surface-hover)] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]/50"
+            className={cn(arrowCls, "right-4")}
             aria-label="Next slide"
           >
             <ChevronRight className="size-6 text-[var(--text)]" />
-          </button>
+          </motion.button>
         </>
       )}
 
       {showDots && slides.length > 1 && (
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3">
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2">
           {slides.map((_, i) => (
             <button
               key={i}
               onClick={() => goTo(i)}
               className={cn(
-                "size-3 rounded-full transition-all duration-300",
+                "h-2 rounded-full transition-all duration-300",
                 i === current
-                  ? "bg-[var(--primary)] scale-125 shadow-md"
-                  : "bg-[var(--muted)] hover:bg-[var(--primary)]/50"
+                  ? "w-6 bg-[var(--primary)] shadow-[0_0_8px_var(--primary)]"
+                  : "w-2 bg-[var(--muted)] hover:bg-[var(--primary)]/50",
               )}
               aria-label={`Go to slide ${i + 1}`}
             />
